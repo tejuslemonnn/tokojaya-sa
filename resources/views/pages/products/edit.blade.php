@@ -164,7 +164,9 @@
                             class="form-select form-select-solid form-select-lg fw-bold" required>
                             <option value="">{{ __('Pilih satuan...') }}</option>
                             @foreach ($satuans as $satuan)
-                                <option value="{{ $satuan->id }}">{{ $satuan->nama }}</option>
+                                <option value="{{ $satuan->id }}"
+                                    {{ $product->satuan->nama == $satuan->nama ? 'selected' : '' }}>
+                                    {{ $satuan->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -175,7 +177,8 @@
                 <!--begin::Input group-->
                 <div class="row mb-6">
                     <!--begin::Label-->
-                    <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Harga & Stok') }}</label>
+                    <label
+                        class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Harga, Stok & Diskon') }}</label>
                     <!--end::Label-->
 
                     <!--begin::Col-->
@@ -183,7 +186,7 @@
                         <!--begin::Row-->
                         <div class="row">
                             <!--begin::Col-->
-                            <div class="col-lg-4 fv-row">
+                            <div class="col-lg-6 fv-row">
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon1">Rp.</span>
                                     <input type="number" min="0" name="harga"
@@ -194,10 +197,21 @@
                             <!--end::Col-->
 
                             <!--begin::Col-->
-                            <div class="col-lg-6 fv-row">
+                            <div class="col-lg-4 fv-row">
                                 <input type="number" min="0" name="stok"
                                     class="form-control form-control-lg form-control-solid" placeholder="Stok"
                                     value="{{ $product->stok }}" />
+                            </div>
+                            <!--end::Col-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-2 fv-row">
+                                <div class="input-group">
+                                    <input type="number" min="0" name="diskon"
+                                        class="form-control form-control-lg form-control-solid" placeholder="Diskon"
+                                        value="{{ $product->diskon }}" required />
+                                    <span class="input-group-text" id="basic-addon1">%</span>
+                                </div>
                             </div>
                             <!--end::Col-->
                         </div>

@@ -82,7 +82,7 @@ class CashierDataTable extends DataTable
             ->minifiedAjax()
             ->responsive()
             ->autoWidth(false)
-            ->parameters(['scrollX' => true])
+            ->parameters(['scrollX' => true, 'searching' => false,])
             ->addTableClass('align-middle table-row-dashed fs-6 gy-5');
     }
 

@@ -13,6 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\DataTables\ReturnProductDataTable;
 use App\DataTables\LaporanProductsDataTable;
 use App\Models\LaporanProducts;
+use App\Models\Product;
 use Carbon\Carbon;
 
 class LaporanController extends Controller
@@ -95,15 +96,27 @@ class LaporanController extends Controller
             'deskripsi' => ['required'],
         ]);
 
-        $laporanProducts = LaporanProducts::find($req['laporan_product_id']);
 
-        $jumlah = $laporanProducts->jumlah - convertUnit($laporanProducts->satuan, $req['satuan'], $req['jumlah']);
+        $laporanProducts = LaporanProducts::find($req['laporan_product_id']);
+        $product = Product::find($req['product_id']);
+        $return = ReturnProduct::where('laporan_product_id', $req['laporan_product_id'])->first();
 
         $laporanProducts->update([
-            'jumlah' => $jumlah
+            'jumlah' => $laporanProducts->jumlah - convertUnit($laporanProducts->satuan, $req['satuan'], $req['jumlah'])
         ]);
 
-        ReturnProduct::create($req);
+        $product->update([
+            'stok' => $product->stok - convertUnit($product->satuan->nama, $req['satuan'], $req['jumlah'])
+        ]);
+
+        if (!empty($return)) {
+            $return->update([
+                'jumlah' => $return->jumlah +  convertUnit($return->satuan, $req['satuan'], $req['jumlah'])
+            ]);
+        } else {
+            ReturnProduct::create($req);
+        }
+
 
         return redirect()->back()->with('success', 'Berhasil return produk!');
     }

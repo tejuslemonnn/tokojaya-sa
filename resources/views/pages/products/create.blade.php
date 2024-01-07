@@ -172,7 +172,7 @@
                 <!--begin::Input group-->
                 <div class="row mb-6">
                     <!--begin::Label-->
-                    <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Harga & Stok') }}</label>
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Harga, Stok & Diskon') }}</label>
                     <!--end::Label-->
 
                     <!--begin::Col-->
@@ -180,7 +180,7 @@
                         <!--begin::Row-->
                         <div class="row">
                             <!--begin::Col-->
-                            <div class="col-lg-4 fv-row">
+                            <div class="col-lg-6 fv-row">
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon1">Rp.</span>
                                     <input type="number" min="0" name="harga"
@@ -191,10 +191,21 @@
                             <!--end::Col-->
 
                             <!--begin::Col-->
-                            <div class="col-lg-6 fv-row">
+                            <div class="col-lg-4 fv-row">
                                 <input type="number" min="0" name="stok"
                                     class="form-control form-control-lg form-control-solid" placeholder="Stok"
                                     value="{{ old('stok') }}" required />
+                            </div>
+                            <!--end::Col-->
+
+                            <!--begin::Col-->
+                            <div class="col-lg-2 fv-row">
+                                <div class="input-group">
+                                    <input type="number" min="0" name="diskon"
+                                        class="form-control form-control-lg form-control-solid" placeholder="Diskon"
+                                        value="{{ old('diskon') }}" required />
+                                    <span class="input-group-text" id="basic-addon1">%</span>
+                                </div>
                             </div>
                             <!--end::Col-->
                         </div>
@@ -209,7 +220,8 @@
 
             <!--begin::Actions-->
             <div class="card-footer d-flex justify-content-end py-6 px-9">
-                <a href="{{ route('products.index') }}" class="btn me-2 btn-danger" id="kt_account_profile_details_submit">
+                <a href="{{ route('products.index') }}" class="btn me-2 btn-danger"
+                    id="kt_account_profile_details_submit">
                     @include('partials.general._button-indicator', ['label' => __('Back')])
                 </a>
                 <button type="submit" class="btn btn-success" id="kt_account_profile_details_submit">

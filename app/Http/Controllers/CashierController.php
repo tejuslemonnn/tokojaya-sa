@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Cashier;
 use App\Models\Laporan;
 use App\Models\Product;
@@ -11,6 +12,7 @@ use App\Models\LaporanProducts;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\DataTables\CashierDataTable;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class CashierController extends Controller
@@ -137,10 +139,22 @@ class CashierController extends Controller
 
         return redirect()->back()->with('success', 'Produk berhasil dihapus!');
     }
-    public function clearCart()
+    public function clearCart(Request $request)
     {
-        Cashier::where('user_id', auth()->user()->id)->delete();
-        return redirect()->back()->with('success', 'Membatalkan Pesanan!');
+        $request->validate([
+            'password' => ['required'],
+            'username' => ['required'],
+        ]);
+
+        $user = User::where('username', $request->input('username'))->first();
+
+        if ($user && Hash::check($request->input('password'), $user->password) && $user->hasRole('kepala-kasir')) {
+            Cashier::where('user_id', auth()->user()->id)->delete();
+            return redirect()->back()->with('success', 'Membatalkan Pesanan!');
+        } else {
+            $error = $user ? ($user->hasRole('kepala-kasir') ? 'Wajib akun kepala kasir.' : 'Password salah.') : 'Username tidak ditemukan.';
+            return redirect()->back()->with('error', $error);
+        }
     }
     public function updateCart(Request $request)
     {

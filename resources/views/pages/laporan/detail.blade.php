@@ -37,7 +37,8 @@
                 </div>
 
                 <div class="col-2 text-end">
-                    <a href="{{ route('invoice', $laporan->no_laporan) }}" class="btn btn-sm btn-primary" target="_blank">
+                    <a href="{{ route('invoice', $laporan->no_laporan) }}" class="btn btn-sm btn-primary"
+                        target="_blank">
                         Struk
                     </a>
                 </div>
@@ -108,7 +109,7 @@
 
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="basic-addon2">Jumlah</span>
-                                    <input type="text" class="form-control" name="jumlah">
+                                    <input type="number" class="form-control" name="jumlah">
                                 </div>
 
                                 <div class="input-group mb-3">

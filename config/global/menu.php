@@ -299,6 +299,7 @@ return array(
             'title' => 'Categories',
             'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm009.svg", "svg-icon-2"),
             'path'  => 'categories',
+            'permission' => ['manage shop', 'manage account']
         ),
 
         // Categories
@@ -306,6 +307,7 @@ return array(
             'title' => 'Satuans',
             'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm009.svg", "svg-icon-2"),
             'path'  => 'satuans',
+            'permission' => ['manage shop', 'manage account']
         ),
 
         // Karyawan

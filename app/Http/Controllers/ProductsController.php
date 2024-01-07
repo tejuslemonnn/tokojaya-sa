@@ -56,7 +56,8 @@ class ProductsController extends Controller
             'kategori_id'      => ['required'],
             'satuan_id'      => ['required'],
             'harga'         => ['required'],
-            'stok'          => ['required']
+            'stok'          => ['required'],
+            'diskon'          => ['required'],
         ]);
 
         if ($request->hasFile('foto')) {
@@ -72,6 +73,7 @@ class ProductsController extends Controller
     {
         return view('pages.products.detail', [
             'product' => Product::with('category')->find($id),
+            'satuans' => Satuan::all()
         ]);
     }
 

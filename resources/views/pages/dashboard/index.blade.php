@@ -2,20 +2,14 @@
 
     <!--begin::Row-->
     <div class="row gy-5 g-xl-8">
-        <!--begin::Col-->
-        <div class="col-xxl-4">
-            {{ theme()->getView('partials/widgets/dashboard/mixed/income-statistics', array('class' => 'card-xxl-stretch', 'chartColor' => 'danger', 'chartHeight' => '200px', 'productCounts' => $productCounts, 'totalIncome' => $totalIncome)) }}
+        {{-- <!--begin::Col-->
+        <div class="col-xxl">
+            {{ theme()->getView('partials/widgets/dashboard/mixed/income-statistics', ['class' => 'card-xxl-stretch', 'chartColor' => 'danger', 'chartHeight' => '200px', 'productCounts' => $productCounts, 'totalIncome' => $totalIncome]) }}
         </div>
-        <!--end::Col-->
+        <!--end::Col--> --}}
 
         <!--begin::Col-->
-        <div class="col-xxl-4">
-            {{ theme()->getView('partials/widgets/dashboard/list/laporan-activity', array('class' => 'card-xxl-stretch', 'laporans' => $laporans)) }}
-        </div>
-        <!--end::Col-->
-
-        <!--begin::Col-->
-        <div class="col-xxl-4">
+        <div class="col-xxl">
             {{ theme()->getView('partials/widgets/mixed/_widget-7', array('class' => 'card-xxl-stretch-50 mb-5 mb-xl-8', 'chartColor' => 'primary', 'chartHeight' => '150px')) }}
 
             {{ theme()->getView('partials/widgets/mixed/_widget-10', array('class' => 'card-xxl-stretch-50 mb-5 mb-xl-8', 'chartColor' => 'primary', 'chartHeight' => '175px')) }}

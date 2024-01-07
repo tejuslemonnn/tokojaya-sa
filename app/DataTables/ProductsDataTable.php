@@ -43,6 +43,9 @@ class ProductsDataTable extends DataTable
             ->editColumn('harga', function (Product $model) {
                 return $model->harga;
             })
+            ->editColumn('diskon', function (Product $model) {
+                return $model->diskon . ' %';
+            })
             ->editColumn('stok', function (Product $model) {
                 return $model->stok . " " .  $model->satuan->nama;
             })
@@ -109,6 +112,7 @@ class ProductsDataTable extends DataTable
             Column::make('kategori_id')->title('kategori'),
             Column::make('satuan_id')->title('satuan'),
             Column::make('harga'),
+            Column::make('diskon'),
             Column::make('stok'),
             Column::make('foto')->addClass('none'),
             Column::computed('action')

@@ -2,28 +2,192 @@
 
 // Class definition
 var KTWidgets = function () {
-    // Mixed widgets
+    // Dashboard widgets
+    // var initIncomeStatistics = function () {
+    //     var charts = document.querySelectorAll('.income-statistics-chart');
+
+    //     var color;
+    //     var strokeColor;
+    //     var height;
+    //     var labelColor = KTUtil.getCssVariableValue('--bs-gray-500');
+    //     var borderColor = KTUtil.getCssVariableValue('--bs-gray-200');
+    //     var options;
+    //     var chart;
+
+    //     [].slice.call(charts).map(function (element) {
+    //         height = parseInt(KTUtil.css(element, 'height'));
+    //         color = KTUtil.getCssVariableValue('--bs-' + element.getAttribute("data-kt-color"));
+    //         strokeColor = KTUtil.colorDarken(color, 15);
+
+    //         options = {
+    //             /*series: [{
+    //                 name: 'Net Profit',
+    //                 data: [30, 45, 32, 70, 40, 40, 40]
+    //             }],*/
+    //             chart: {
+    //                 fontFamily: 'inherit',
+    //                 type: 'area',
+    //                 height: height,
+    //                 toolbar: {
+    //                     show: false
+    //                 },
+    //                 zoom: {
+    //                     enabled: false
+    //                 },
+    //                 sparkline: {
+    //                     enabled: true
+    //                 },
+    //                 dataLabels:{
+    //                     enabled: true
+    //                 },
+    //                 dropShadow: {
+    //                     enabled: true,
+    //                     enabledOnSeries: undefined,
+    //                     top: 5,
+    //                     left: 0,
+    //                     blur: 3,
+    //                     color: strokeColor,
+    //                     opacity: 0.5
+    //                 }
+    //             },
+    //             plotOptions: {},
+    //             legend: {
+    //                 show: false
+    //             },
+    //             dataLabels: {
+    //                 enabled: false
+    //             },
+    //             fill: {
+    //                 type: 'solid',
+    //                 opacity: 0
+    //             },
+    //             stroke: {
+    //                 curve: 'smooth',
+    //                 show: true,
+    //                 width: 3,
+    //                 colors: [strokeColor]
+    //             },
+    //             xaxis: {
+    //                 // categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    //                 axisBorder: {
+    //                     show: false,
+    //                 },
+    //                 axisTicks: {
+    //                     show: false
+    //                 },
+    //                 labels: {
+    //                     show: true,
+    //                     style: {
+    //                         colors: labelColor,
+    //                         fontSize: '12px'
+    //                     }
+    //                 },
+    //                 crosshairs: {
+    //                     show: false,
+    //                     position: 'front',
+    //                     stroke: {
+    //                         color: borderColor,
+    //                         width: 1,
+    //                         dashArray: 3
+    //                     }
+    //                 }
+    //             },
+    //             yaxis: {
+    //                 min: 0,
+    //                 max: 0,
+    //                 labels: {
+    //                     show: true,
+    //                     style: {
+    //                         colors: labelColor,
+    //                         fontSize: '12px'
+    //                     },
+    //                 }
+    //             },
+    //             states: {
+    //                 normal: {
+    //                     filter: {
+    //                         type: 'none',
+    //                         value: 0
+    //                     }
+    //                 },
+    //                 hover: {
+    //                     filter: {
+    //                         type: 'none',
+    //                         value: 0
+    //                     }
+    //                 },
+    //                 active: {
+    //                     allowMultipleDataPointsSelection: false,
+    //                     filter: {
+    //                         type: 'none',
+    //                         value: 0
+    //                     }
+    //                 }
+    //             },
+    //             tooltip: {
+    //                 style: {
+    //                     fontSize: '12px',
+    //                 },
+    //                 y: {
+                        // formatter: function (val) {
+                        //     return "Rp." + val.toLocaleString('id-ID');
+                        // }
+    //                 },
+    //                 marker: {
+    //                     show: true
+    //                 }
+    //             },
+    //             colors: ['transparent'],
+    //             markers: {
+    //                 colors: [color],
+    //                 strokeColor: [strokeColor],
+    //                 strokeWidth: 3
+    //             }
+    //         };
+
+    //         // get data from api url
+            // getData(element.getAttribute('data-kt-chart-url'), function (response) {
+            //     // update options with the sample data get from api
+            //     // see app/Http/Controllers/SampleDataController.php
+
+            //     var dataValues = Object.values(response.data).map(function (data) {
+            //         return `${data.total}`
+            //     })
+
+            //     options['series'] = [{
+            //         name: 'Net Profit',
+            //         data: dataValues
+            //     }];
+
+            //     // get keys as months
+            //     options['xaxis']['categories'] = Object.keys(response.data);
+            //     options['yaxis']['max'] = Math.max(...dataValues);
+
+            //     // render chart
+            //     var chart = new ApexCharts(element, options);
+            //     chart.render();
+            // });
+    //     });
+    // }
+
     var initIncomeStatistics = function () {
         var charts = document.querySelectorAll('.income-statistics-chart');
 
-        var color;
-        var strokeColor;
-        var height;
-        var labelColor = KTUtil.getCssVariableValue('--bs-gray-500');
-        var borderColor = KTUtil.getCssVariableValue('--bs-gray-200');
-        var options;
-        var chart;
-
         [].slice.call(charts).map(function (element) {
-            height = parseInt(KTUtil.css(element, 'height'));
-            color = KTUtil.getCssVariableValue('--bs-' + element.getAttribute("data-kt-color"));
-            strokeColor = KTUtil.colorDarken(color, 15);
+            var height = parseInt(KTUtil.css(element, 'height'));
 
-            options = {
-                /*series: [{
-                    name: 'Net Profit',
-                    data: [30, 45, 32, 70, 40, 40, 40]
-                }],*/
+            if (!element) {
+                return;
+            }
+
+            var color = element.getAttribute('data-kt-chart-color');
+
+            var labelColor = KTUtil.getCssVariableValue('--bs-' + 'gray-800');
+            var strokeColor = KTUtil.getCssVariableValue('--bs-' + 'gray-300');
+            var baseColor = KTUtil.getCssVariableValue('--bs-' + color);
+            var lightColor = KTUtil.getCssVariableValue('--bs-light-' + color);
+
+            var options = {
                 chart: {
                     fontFamily: 'inherit',
                     type: 'area',
@@ -36,18 +200,6 @@ var KTWidgets = function () {
                     },
                     sparkline: {
                         enabled: true
-                    },
-                    dataLabels:{
-                        enabled: true
-                    },
-                    dropShadow: {
-                        enabled: true,
-                        enabledOnSeries: undefined,
-                        top: 5,
-                        left: 0,
-                        blur: 3,
-                        color: strokeColor,
-                        opacity: 0.5
                     }
                 },
                 plotOptions: {},
@@ -59,16 +211,15 @@ var KTWidgets = function () {
                 },
                 fill: {
                     type: 'solid',
-                    opacity: 0
+                    opacity: 1
                 },
                 stroke: {
                     curve: 'smooth',
                     show: true,
                     width: 3,
-                    colors: [strokeColor]
+                    colors: [baseColor]
                 },
                 xaxis: {
-                    // categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                     axisBorder: {
                         show: false,
                     },
@@ -76,7 +227,7 @@ var KTWidgets = function () {
                         show: false
                     },
                     labels: {
-                        show: true,
+                        show: false,
                         style: {
                             colors: labelColor,
                             fontSize: '12px'
@@ -86,9 +237,17 @@ var KTWidgets = function () {
                         show: false,
                         position: 'front',
                         stroke: {
-                            color: borderColor,
+                            color: strokeColor,
                             width: 1,
                             dashArray: 3
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        formatter: undefined,
+                        offsetY: 0,
+                        style: {
+                            fontSize: '12px'
                         }
                     }
                 },
@@ -96,11 +255,11 @@ var KTWidgets = function () {
                     min: 0,
                     max: 0,
                     labels: {
-                        show: true,
+                        show: false,
                         style: {
                             colors: labelColor,
                             fontSize: '12px'
-                        },
+                        }
                     }
                 },
                 states: {
@@ -126,36 +285,30 @@ var KTWidgets = function () {
                 },
                 tooltip: {
                     style: {
-                        fontSize: '12px',
+                        fontSize: '12px'
                     },
                     y: {
                         formatter: function (val) {
                             return "Rp." + val.toLocaleString('id-ID');
                         }
-                    },
-                    marker: {
-                        show: true
                     }
                 },
-                colors: ['transparent'],
+                colors: [lightColor],
                 markers: {
-                    colors: [color],
-                    strokeColor: [strokeColor],
+                    colors: [lightColor],
+                    strokeColor: [baseColor],
                     strokeWidth: 3
                 }
             };
 
             // get data from api url
             getData(element.getAttribute('data-kt-chart-url'), function (response) {
-                // update options with the sample data get from api
-                // see app/Http/Controllers/SampleDataController.php
-
                 var dataValues = Object.values(response.data).map(function (data) {
                     return `${data.total}`
                 })
 
                 options['series'] = [{
-                    name: 'Net Profit',
+                    name: 'Pendapat Bulan ini',
                     data: dataValues
                 }];
 
@@ -166,7 +319,7 @@ var KTWidgets = function () {
                 // render chart
                 var chart = new ApexCharts(element, options);
                 chart.render();
-            });
+            }); 
         });
     }
 
@@ -1415,7 +1568,7 @@ var KTWidgets = function () {
             }, {
                 name: 'Expenses',
                 data: [60, 60, 40, 40, 30, 30]
-            },],
+            }, ],
             chart: {
                 fontFamily: 'inherit',
                 type: 'area',
@@ -1592,7 +1745,7 @@ var KTWidgets = function () {
                     sparkline: {
                         enabled: true
                     },
-                    dataLabels:{
+                    dataLabels: {
                         enabled: true
                     },
                     dropShadow: {
@@ -2536,7 +2689,7 @@ var KTWidgets = function () {
                         // get revenue data
                         return data.revenue;
                     })
-                },];
+                }, ];
                 // get keys as months
                 options['xaxis']['categories'] = Object.keys(response.data);
 
@@ -3037,15 +3190,21 @@ var KTWidgets = function () {
 
             height: 800,
             contentHeight: 780,
-            aspectRatio: 3,  // see: https://fullcalendar.io/docs/aspectRatio
+            aspectRatio: 3, // see: https://fullcalendar.io/docs/aspectRatio
 
             nowIndicator: true,
             now: TODAY + 'T09:25:00', // just for demo
 
             views: {
-                dayGridMonth: {buttonText: 'month'},
-                timeGridWeek: {buttonText: 'week'},
-                timeGridDay: {buttonText: 'day'}
+                dayGridMonth: {
+                    buttonText: 'month'
+                },
+                timeGridWeek: {
+                    buttonText: 'week'
+                },
+                timeGridDay: {
+                    buttonText: 'day'
+                }
             },
 
             initialView: 'dayGridMonth',
@@ -3054,8 +3213,7 @@ var KTWidgets = function () {
             editable: true,
             dayMaxEvents: true, // allow "more" link when too many events
             navLinks: true,
-            events: [
-                {
+            events: [{
                     title: 'All Day Event',
                     start: YM + '-01',
                     description: 'Toto lorem ipsum dolor sit incid idunt ut',
@@ -3219,10 +3377,8 @@ var KTWidgets = function () {
     var getData = function (url, callback) {
         axios.get(url)
             .then(callback)
-            .catch(function (error) {
-            })
-            .then(function () {
-            });
+            .catch(function (error) {})
+            .then(function () {});
     }
 
     // Public methods

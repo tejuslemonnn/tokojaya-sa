@@ -94,7 +94,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end">
-                                    <button id="batalPesananBtn" type="button"
+                                    <button data-bs-toggle="modal" data-bs-target="#batalPesananModal" type="button"
                                         class="btn btn-sm me-2  {{ empty($cashier) ? 'btn-secondary' : 'btn-danger' }}"
                                         data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
                                         title="{{ empty($cashier) ? 'Produk belum ada!' : 'Batalkan Pesanan' }}">Batal
@@ -136,6 +136,7 @@
                                     <th>Kategori</th>
                                     <th>Satuan</th>
                                     <th>Harga</th>
+                                    <th>Diskon</th>
                                     <th>Stok</th>
                                     <th>Action</th>
                                 </tr>
@@ -149,6 +150,7 @@
                                         <td>{{ $item->category->nama }}</td>
                                         <td>{{ $item->satuan->nama }}</td>
                                         <td>{{ $item->harga }}</td>
+                                        <td>{{ $item->diskon }} %</td>
                                         <td>{{ $item->stok }}</td>
                                         <td>
                                             <form action="{{ route('cashier.addCart') }}" method="post">
@@ -183,6 +185,36 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Batal Pesanan-->
+    <div class="modal fade" id="batalPesananModal" tabindex="-1" aria-labelledby="batalPesananModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="batalPesananModalLabel">Batal Pesanan</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('cashier.clearCart') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="modal-body">
+                        <p class="fw-bold">Kepala Kasir</p>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Username Kepala Kasir"
+                                aria-label="Username Kepala Kasir" aria-describedby="basic-addon1" name="username">
+                            <input type="text" class="form-control" placeholder="Password Kepala Kasir"
+                                aria-label="Password Kepala Kasir" aria-describedby="basic-addon1" name="password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Batal Pesanan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

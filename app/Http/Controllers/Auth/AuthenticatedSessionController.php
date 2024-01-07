@@ -32,6 +32,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        if (Auth::user()->can('manage sale')) {
+            return redirect()->intended('/cashier');
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
