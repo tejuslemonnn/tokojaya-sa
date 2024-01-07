@@ -19,6 +19,7 @@ class UsersSeeder extends Seeder
     public function run(Generator $faker)
     {
         $owner = User::create([
+            'name'          => "Pak Jaya",
             'username'          => "owner",
             'password'          => Hash::make('demo'),
         ]);
@@ -28,6 +29,7 @@ class UsersSeeder extends Seeder
         $owner->assignRole('owner');
 
         $kasir = User::create([
+            'name'          => "Didi",
             'username'          => "kasir",
             'password'          => Hash::make('demo'),
         ]);
@@ -37,6 +39,7 @@ class UsersSeeder extends Seeder
         $kasir->assignRole('kasir');
 
         $kepalaKasir = User::create([
+            'name'          => "Dono",
             'username'          => "kepala-kasir",
             'password'          => Hash::make('demo'),
         ]);

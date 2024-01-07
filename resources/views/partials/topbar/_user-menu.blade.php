@@ -25,11 +25,11 @@
     <!--end::Menu separator-->
 
     <!--begin::Menu item-->
-    <div class="menu-item px-5">
+    {{-- <div class="menu-item px-5">
         <a href="{{ theme()->getPageUrl('settings.index') }}" class="menu-link px-5">
             {{ __('My Profile') }}
         </a>
-    </div>
+    </div> --}}
     <!--end::Menu item-->
 
     <!--begin::Menu separator-->
