@@ -67,7 +67,7 @@
 
             <!--begin::Actions-->
             <div class="card-footer d-flex justify-content-end py-6 px-9">
-                <a href="{{ url()->previous() }}" class="btn btn-danger me-2" id="kt_account_profile_details_submit">
+                <a href="{{ route('categories.index') }}" class="btn btn-danger me-2" id="kt_account_profile_details_submit">
                     @include('partials.general._button-indicator', ['label' => __('Back')])
                 </a>
             </div>

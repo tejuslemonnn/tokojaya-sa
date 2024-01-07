@@ -118,7 +118,7 @@ var KTSignupGeneral = function () {
                                 }
                             }).then(function (result) {
                                 if (result.isConfirmed) {
-                                    form.querySelector('[name="email"]').value = "";
+                                    form.querySelector('[name="username"]').value = "";
                                     form.querySelector('[name="password"]').value = "";
                                     window.location.reload();
                                 }

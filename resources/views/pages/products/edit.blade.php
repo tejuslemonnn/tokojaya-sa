@@ -19,8 +19,7 @@
                 <!--begin::Input group-->
                 <div class="row mb-6">
                     <!--begin::Label-->
-                    <label
-                        class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Foto Produk') }}</label>
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">{{ __('Foto Produk') }}</label>
                     <!--end::Label-->
 
                     <!--begin::Col-->
@@ -107,9 +106,9 @@
                         <div class="row">
                             <!--begin::Col-->
                             <div class="col-lg fv-row">
-                                <input type="text" name="nama_barang"
+                                <input type="text" name="nama_produk"
                                     class="form-control form-control-lg form-control-solid" placeholder="Nama Barang"
-                                    value="{{ $product->nama_barang }}" />
+                                    value="{{ $product->nama_produk }}" />
                             </div>
                             <!--end::Col-->
                         </div>
@@ -137,7 +136,9 @@
                             class="form-select form-select-solid form-select-lg fw-bold" required>
                             <option value="">{{ __('Pilih kategori...') }}</option>
                             @foreach ($categories as $category)
-                                <option value="{{$category->id}}" {{$category->id == $product->kategori_id ? "selected" : ""}}>{{$category->nama}}</option>
+                                <option value="{{ $category->id }}"
+                                    {{ $category->id == $product->kategori_id ? 'selected' : '' }}>
+                                    {{ $category->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -145,6 +146,31 @@
                 </div>
                 <!--end::Input group-->
 
+                <!--begin::Input group-->
+                <div class="row mb-6">
+                    <!--begin::Label-->
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">
+                        <span class="required">{{ __('Satuan') }}</span>
+
+                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
+                            title="{{ __('Satuan produk') }}"></i>
+                    </label>
+                    <!--end::Label-->
+
+                    <!--begin::Col-->
+                    <div class="col-lg-8 fv-row">
+                        <select name="satuan_id" aria-label="{{ __('Pilih satuan') }}" data-control="select2"
+                            data-placeholder="{{ __('Pilih satuan...') }}"
+                            class="form-select form-select-solid form-select-lg fw-bold" required>
+                            <option value="">{{ __('Pilih satuan...') }}</option>
+                            @foreach ($satuans as $satuan)
+                                <option value="{{ $satuan->id }}">{{ $satuan->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!--end::Col-->
+                </div>
+                <!--end::Input group-->
 
                 <!--begin::Input group-->
                 <div class="row mb-6">
@@ -186,7 +212,8 @@
 
             <!--begin::Actions-->
             <div class="card-footer d-flex justify-content-end py-6 px-9">
-                <a href="{{ url()->previous() }}" class="btn btn-danger me-2" id="kt_account_profile_details_submit">
+                <a href="{{ route('products.index') }}" class="btn btn-danger me-2"
+                    id="kt_account_profile_details_submit">
                     @include('partials.general._button-indicator', ['label' => __('Back')])
                 </a>
                 <button type="submit" class="btn btn-success" id="kt_account_profile_details_submit">

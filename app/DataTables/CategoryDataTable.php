@@ -29,10 +29,11 @@ class CategoryDataTable extends DataTable
                 return $model->kode;
             })
             ->addColumn('action', function (Category $model) {
-                return view('partials.widgets.master._action-menu', [
+                return view('pages.categories._action-menu', [
                     'destroyUrl' => route('categories.destroy', $model->id),
                     'showUrl' => route('categories.show', $model->id),
                     'editUrl' => route('categories.edit', $model->id),
+                    'model' => $model
                 ]);
             });
     }

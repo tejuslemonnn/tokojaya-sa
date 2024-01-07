@@ -191,6 +191,23 @@ return array(
             'title' => 'Dashboard',
             'path'  => 'index',
             'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/art/art002.svg", "svg-icon-2"),
+            'permission' => ['manage shop', 'manage account']
+        ),
+
+        //// Kasir
+        array(
+            'title' => 'Kasir',
+            'path'  => 'cashier',
+            'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm008.svg", "svg-icon-2"),
+            'permission' => ['manage sale']
+        ),
+
+        //// Laporan
+        array(
+            'title' => 'Laporan',
+            'path' => 'laporan',
+            'icon' => theme()->getSvgIcon("demo1/media/icons/duotune/files/fil003.svg"),
+            'permission' => ['manage shop', 'manage account']
         ),
 
         //// Modules
@@ -200,82 +217,81 @@ return array(
         ),
 
         // Account
-        array(
-            'title'      => 'Account',
-            'icon'       => array(
-                'svg'  => theme()->getSvgIcon("demo1/media/icons/duotune/communication/com006.svg", "svg-icon-2"),
-                'font' => '<i class="bi bi-person fs-2"></i>',
-            ),
-            'classes'    => array('item' => 'menu-accordion'),
-            'attributes' => array(
-                "data-kt-menu-trigger" => "click",
-            ),
-            'sub'        => array(
-                'class' => 'menu-sub-accordion menu-active-bg',
-                'items' => array(
-                    array(
-                        'title'  => 'Overview',
-                        'path'   => 'account/overview',
-                        'bullet' => '<span class="bullet bullet-dot"></span>',
-                    ),
-                    array(
-                        'title'  => 'Settings',
-                        'path'   => 'account/settings',
-                        'bullet' => '<span class="bullet bullet-dot"></span>',
-                    ),
-                    array(
-                        'title'      => 'Security',
-                        'path'       => '#',
-                        'bullet'     => '<span class="bullet bullet-dot"></span>',
-                        'attributes' => array(
-                            'link' => array(
-                                "title"             => "Coming soon",
-                                "data-bs-toggle"    => "tooltip",
-                                "data-bs-trigger"   => "hover",
-                                "data-bs-dismiss"   => "click",
-                                "data-bs-placement" => "right",
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
+        // array(
+        //     'title'      => 'Account',
+        //     'icon'       => array(
+        //         'svg'  => theme()->getSvgIcon("demo1/media/icons/duotune/communication/com006.svg", "svg-icon-2"),
+        //         'font' => '<i class="bi bi-person fs-2"></i>',
+        //     ),
+        //     'classes'    => array('item' => 'menu-accordion'),
+        //     'attributes' => array(
+        //         "data-kt-menu-trigger" => "click",
+        //     ),
+        //     'sub'        => array(
+        //         'class' => 'menu-sub-accordion menu-active-bg',
+        //         'items' => array(
+        //             array(
+        //                 'title'  => 'Overview',
+        //                 'path'   => 'account/overview',
+        //                 'bullet' => '<span class="bullet bullet-dot"></span>',
+        //             ),
+        //             array(
+        //                 'title'  => 'Settings',
+        //                 'path'   => 'account/settings',
+        //                 'bullet' => '<span class="bullet bullet-dot"></span>',
+        //             ),
+        //             array(
+        //                 'title'      => 'Security',
+        //                 'path'       => '#',
+        //                 'bullet'     => '<span class="bullet bullet-dot"></span>',
+        //                 'attributes' => array(
+        //                     'link' => array(
+        //                         "title"             => "Coming soon",
+        //                         "data-bs-toggle"    => "tooltip",
+        //                         "data-bs-trigger"   => "hover",
+        //                         "data-bs-dismiss"   => "click",
+        //                         "data-bs-placement" => "right",
+        //                     ),
+        //                 ),
+        //             ),
+        //         ),
+        //     ),
+        // ),
 
         // System
-        array(
-            'title'      => 'System',
-            'role'       => ['owner'],
-            'icon'       => array(
-                'svg'  => theme()->getSvgIcon("demo1/media/icons/duotune/general/gen025.svg", "svg-icon-2"),
-                'font' => '<i class="bi bi-layers fs-3"></i>',
-            ),
-            'classes'    => array('item' => 'menu-accordion'),
-            'attributes' => array(
-                "data-kt-menu-trigger" => "click",
-            ),
-            'sub'        => array(
-                'class' => 'menu-sub-accordion menu-active-bg',
-                'items' => array(
-                    array(
-                        'title'  => 'Audit Log',
-                        'path'   => 'log/audit',
-                        'bullet' => '<span class="bullet bullet-dot"></span>',
-                    ),
-                    array(
-                        'title'  => 'System Log',
-                        'path'   => 'log/system',
-                        'bullet' => '<span class="bullet bullet-dot"></span>',
-                    ),
-                ),
-            ),
-        ),
+        // array(
+        //     'title'      => 'System',
+        //     'role'       => ['owner'],
+        //     'icon'       => array(
+        //         'svg'  => theme()->getSvgIcon("demo1/media/icons/duotune/general/gen025.svg", "svg-icon-2"),
+        //         'font' => '<i class="bi bi-layers fs-3"></i>',
+        //     ),
+        //     'classes'    => array('item' => 'menu-accordion'),
+        //     'attributes' => array(
+        //         "data-kt-menu-trigger" => "click",
+        //     ),
+        //     'sub'        => array(
+        //         'class' => 'menu-sub-accordion menu-active-bg',
+        //         'items' => array(
+        //             array(
+        //                 'title'  => 'Audit Log',
+        //                 'path'   => 'log/audit',
+        //                 'bullet' => '<span class="bullet bullet-dot"></span>',
+        //             ),
+        //             array(
+        //                 'title'  => 'System Log',
+        //                 'path'   => 'log/system',
+        //                 'bullet' => '<span class="bullet bullet-dot"></span>',
+        //             ),
+        //         ),
+        //     ),
+        // ),
 
         // Product
         array(
             'title' => 'Products',
             'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm005.svg", "svg-icon-2"),
             'path'  => 'products',
-            // 'permission' => ['manage shop']
         ),
 
         // Categories
@@ -283,6 +299,21 @@ return array(
             'title' => 'Categories',
             'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm009.svg", "svg-icon-2"),
             'path'  => 'categories',
+        ),
+
+        // Categories
+        array(
+            'title' => 'Satuans',
+            'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm009.svg", "svg-icon-2"),
+            'path'  => 'satuans',
+        ),
+
+        // Karyawan
+        array(
+            'title' => 'Users',
+            'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/communication/com005.svg", "svg-icon-2"),
+            'path'  => 'users',
+            'permission' => ['manage account']
         ),
 
         // Separator
@@ -327,7 +358,7 @@ return array(
 
                     // Changelog
                     array(
-                        'title' => 'Changelog v'.theme()->getVersion(),
+                        'title' => 'Changelog v' . theme()->getVersion(),
                         'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/general/gen005.svg", "svg-icon-2"),
                         'path'  => 'documentation/getting-started/changelog',
                     ),

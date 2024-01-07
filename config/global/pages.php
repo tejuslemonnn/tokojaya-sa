@@ -23,7 +23,7 @@ return array(
         'assets' => array(
             'custom' => array(
                 'js' => array(
-                    'js/custom/authentication/sign-in/general.js',
+                    'js/custom/sign-in/general.js',
                 ),
             ),
         ),
@@ -130,6 +130,20 @@ return array(
         ),
     ),
 
+    'satuans' => array(
+        'title'  => 'Satuans',
+        'assets' => array(
+            'custom' => array(
+                'css' => array(
+                    'plugins/custom/datatables/datatables.bundle.css',
+                ),
+                'js'  => array(
+                    'plugins/custom/datatables/datatables.bundle.js',
+                ),
+            ),
+        ),
+    ),
+
     'account' => array(
         'overview' => array(
             'title'  => 'Account Overview',
@@ -159,12 +173,61 @@ return array(
 
     'users'         => array(
         'title' => 'User List',
+        'assets' => array(
+            'custom' => array(
+                'css' => array(
+                    'plugins/custom/datatables/datatables.bundle.css',
+                ),
+                'js'  => array(
+                    'plugins/custom/datatables/datatables.bundle.js',
+                ),
+            ),
+        ),
+    ),
 
-        '*' => array(
-            'title' => 'Show User',
+    'users/2/edit' => array(
+        'title' => 'Show User',
+    ),
 
-            'edit' => array(
-                'title' => 'Edit User',
+    'cashier'         => array(
+        'title' => 'Kasir',
+        'assets' => array(
+            'custom' => array(
+                'css' => array(
+                    'plugins/custom/datatables/datatables.bundle.css',
+                ),
+                'js'  => array(
+                    'plugins/custom/datatables/datatables.bundle.js',
+                ),
+            ),
+        ),
+    ),
+
+    'laporan'         => array(
+        'title' => 'Laporan',
+        'assets' => array(
+            'custom' => array(
+                'css' => array(
+                    'plugins/custom/datatables/datatables.bundle.css',
+                ),
+                'js'  => array(
+                    'plugins/custom/datatables/datatables.bundle.js',
+                ),
+            ),
+        ),
+    ),
+
+    'laporan' => array(
+        '*'         => array(
+            'assets' => array(
+                'custom' => array(
+                    'css' => array(
+                        'plugins/custom/datatables/datatables.bundle.css',
+                    ),
+                    'js'  => array(
+                        'plugins/custom/datatables/datatables.bundle.js',
+                    ),
+                ),
             ),
         ),
     ),

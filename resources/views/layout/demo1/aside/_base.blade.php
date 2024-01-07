@@ -23,7 +23,8 @@
     <div class="aside-logo flex-column-auto" id="kt_aside_logo">
         {{--begin::Logo--}}
         <a href="{{ theme()->getPageUrl('index') }}">
-            <img alt="Logo" src="{{ asset(theme()->getMediaUrlPath() . 'logos/' . $logoFileName) }}" class="h-25px logo"/>
+            {{-- <img alt="Logo" src="{{ asset(theme()->getMediaUrlPath() . 'logos/' . $logoFileName) }}" class="h-25px logo"/> --}}
+            <h2 class="h-25px logo fw-bold text-light">TOKO JAYA SA</h2>
         </a>
         {{--end::Logo--}}
 

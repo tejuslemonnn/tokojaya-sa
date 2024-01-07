@@ -2,6 +2,174 @@
 
 // Class definition
 var KTWidgets = function () {
+    // Mixed widgets
+    var initIncomeStatistics = function () {
+        var charts = document.querySelectorAll('.income-statistics-chart');
+
+        var color;
+        var strokeColor;
+        var height;
+        var labelColor = KTUtil.getCssVariableValue('--bs-gray-500');
+        var borderColor = KTUtil.getCssVariableValue('--bs-gray-200');
+        var options;
+        var chart;
+
+        [].slice.call(charts).map(function (element) {
+            height = parseInt(KTUtil.css(element, 'height'));
+            color = KTUtil.getCssVariableValue('--bs-' + element.getAttribute("data-kt-color"));
+            strokeColor = KTUtil.colorDarken(color, 15);
+
+            options = {
+                /*series: [{
+                    name: 'Net Profit',
+                    data: [30, 45, 32, 70, 40, 40, 40]
+                }],*/
+                chart: {
+                    fontFamily: 'inherit',
+                    type: 'area',
+                    height: height,
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    },
+                    sparkline: {
+                        enabled: true
+                    },
+                    dataLabels:{
+                        enabled: true
+                    },
+                    dropShadow: {
+                        enabled: true,
+                        enabledOnSeries: undefined,
+                        top: 5,
+                        left: 0,
+                        blur: 3,
+                        color: strokeColor,
+                        opacity: 0.5
+                    }
+                },
+                plotOptions: {},
+                legend: {
+                    show: false
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                fill: {
+                    type: 'solid',
+                    opacity: 0
+                },
+                stroke: {
+                    curve: 'smooth',
+                    show: true,
+                    width: 3,
+                    colors: [strokeColor]
+                },
+                xaxis: {
+                    // categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                    axisBorder: {
+                        show: false,
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                    labels: {
+                        show: true,
+                        style: {
+                            colors: labelColor,
+                            fontSize: '12px'
+                        }
+                    },
+                    crosshairs: {
+                        show: false,
+                        position: 'front',
+                        stroke: {
+                            color: borderColor,
+                            width: 1,
+                            dashArray: 3
+                        }
+                    }
+                },
+                yaxis: {
+                    min: 0,
+                    max: 0,
+                    labels: {
+                        show: true,
+                        style: {
+                            colors: labelColor,
+                            fontSize: '12px'
+                        },
+                    }
+                },
+                states: {
+                    normal: {
+                        filter: {
+                            type: 'none',
+                            value: 0
+                        }
+                    },
+                    hover: {
+                        filter: {
+                            type: 'none',
+                            value: 0
+                        }
+                    },
+                    active: {
+                        allowMultipleDataPointsSelection: false,
+                        filter: {
+                            type: 'none',
+                            value: 0
+                        }
+                    }
+                },
+                tooltip: {
+                    style: {
+                        fontSize: '12px',
+                    },
+                    y: {
+                        formatter: function (val) {
+                            return "Rp." + val.toLocaleString('id-ID');
+                        }
+                    },
+                    marker: {
+                        show: true
+                    }
+                },
+                colors: ['transparent'],
+                markers: {
+                    colors: [color],
+                    strokeColor: [strokeColor],
+                    strokeWidth: 3
+                }
+            };
+
+            // get data from api url
+            getData(element.getAttribute('data-kt-chart-url'), function (response) {
+                // update options with the sample data get from api
+                // see app/Http/Controllers/SampleDataController.php
+
+                var dataValues = Object.values(response.data).map(function (data) {
+                    return `${data.total}`
+                })
+
+                options['series'] = [{
+                    name: 'Net Profit',
+                    data: dataValues
+                }];
+
+                // get keys as months
+                options['xaxis']['categories'] = Object.keys(response.data);
+                options['yaxis']['max'] = Math.max(...dataValues);
+
+                // render chart
+                var chart = new ApexCharts(element, options);
+                chart.render();
+            });
+        });
+    }
+
     // Statistics widgets
     var initStatisticsWidget3 = function () {
         var charts = document.querySelectorAll('.statistics-widget-3-chart');
@@ -441,10 +609,10 @@ var KTWidgets = function () {
                 },
             },
             legend: {
-                show: false
+                show: true
             },
             dataLabels: {
-                enabled: false
+                enabled: true
             },
             stroke: {
                 show: true,
@@ -1424,6 +1592,9 @@ var KTWidgets = function () {
                     sparkline: {
                         enabled: true
                     },
+                    dataLabels:{
+                        enabled: true
+                    },
                     dropShadow: {
                         enabled: true,
                         enabledOnSeries: undefined,
@@ -1460,7 +1631,7 @@ var KTWidgets = function () {
                         show: false
                     },
                     labels: {
-                        show: false,
+                        show: true,
                         style: {
                             colors: labelColor,
                             fontSize: '12px'
@@ -1480,7 +1651,7 @@ var KTWidgets = function () {
                     min: 0,
                     max: 80,
                     labels: {
-                        show: false,
+                        show: true,
                         style: {
                             colors: labelColor,
                             fontSize: '12px'
@@ -1518,7 +1689,7 @@ var KTWidgets = function () {
                         }
                     },
                     marker: {
-                        show: false
+                        show: true
                     }
                 },
                 colors: ['transparent'],
@@ -3098,6 +3269,9 @@ var KTWidgets = function () {
 
             // Calendar
             initCalendarWidget1();
+
+            // Dashboard
+            initIncomeStatistics();
         }
     }
 }();

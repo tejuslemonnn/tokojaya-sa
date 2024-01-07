@@ -24,15 +24,8 @@ class SettingsInfoRequest extends FormRequest
     public function rules()
     {
         return [
-            'company'       => 'nullable|string|max:255',
-            'phone'         => 'nullable|string|max:255',
-            'website'       => 'nullable|string|max:255',
-            'country'       => 'nullable|string|max:255',
-            'language'      => 'nullable|string|max:255',
-            'timezone'      => 'nullable|string|max:255',
-            'currency'      => 'nullable|string|max:255',
-            'communication' => 'nullable|array',
-            'marketing'     => 'nullable|integer',
+            'phone'         => 'string|max:255',
+            'address'      => 'string|max:255',
         ];
     }
 }

@@ -20,4 +20,5 @@ use Illuminate\Support\Facades\Route;
 
 // Sample API route
 Route::get('/profits', [\App\Http\Controllers\SampleDataController::class, 'profits'])->name('profits');
+Route::get('/incomeStatistics', [\App\Http\Controllers\DashboardController::class, 'incomeStatistics'])->name('incomeStatistics');
 

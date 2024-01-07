@@ -45,7 +45,7 @@ class CategoriesController extends Controller
 
         $category->update($requestData);
 
-        return redirect()->intended('categories')->with('success', 'Berhasil Update!');
+        return redirect()->intended('categories')->with('success', 'Berhasil Mengupdate!');
     }
 
     public function destroy($id)

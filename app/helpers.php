@@ -191,3 +191,35 @@ if (!function_exists('isRTL')) {
         return (bool) request()->input('rtl');
     }
 }
+
+
+if (!function_exists('convertUnit')) {
+    function convertUnit($fromUnit, $toUnit, $quantity)
+    {
+        // Normalize units to lowercase for easier comparison
+        $fromUnit = strtolower($fromUnit);
+        $toUnit = strtolower($toUnit);
+
+        // Conversion logic
+        if ($fromUnit == 'kg' && $toUnit == 'g') {
+            return $quantity / 1000;
+        } elseif ($fromUnit == 'g' && $toUnit == 'kg') {
+            return $quantity * 1000;
+        } elseif ($fromUnit == 'l' && $toUnit == 'ml') {
+            return $quantity / 1000;
+        } elseif ($fromUnit == 'ml' && $toUnit == 'l') {
+            return $quantity * 1000;
+        }
+
+        // Default: no conversion
+        return $quantity;
+    }
+}
+
+if (!function_exists('convertRupiah')) {
+    function convertRupiah($angka)
+    {
+        $convertToRupiah = number_format($angka, 0, ',', '.');
+        return $convertToRupiah;
+    }
+}

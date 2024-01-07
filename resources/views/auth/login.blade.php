@@ -29,11 +29,11 @@
         <!--begin::Input group-->
         <div class="fv-row mb-10">
             <!--begin::Label-->
-            <label class="form-label fs-6 fw-bolder text-dark">{{ __('Email') }}</label>
+            <label class="form-label fs-6 fw-bolder text-dark">{{ __('Username') }}</label>
             <!--end::Label-->
 
             <!--begin::Input-->
-            <input class="form-control form-control-lg form-control-solid" type="email" name="email" autocomplete="off" value="{{ old('email', 'demo@demo.com') }}" required autofocus/>
+            <input class="form-control form-control-lg form-control-solid" type="text" name="username" autocomplete="off" value="{{ old('username', 'owner') }}" required autofocus/>
             <!--end::Input-->
         </div>
         <!--end::Input group-->
@@ -75,7 +75,8 @@
         <!--begin::Actions-->
         <div class="text-center">
             <!--begin::Submit button-->
-            <button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary w-100 mb-5">
+            {{-- <button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary w-100 mb-5"> --}}
+                <button type="submit" class="btn btn-lg btn-primary w-100 mb-5">
                 @include('partials.general._button-indicator', ['label' => __('Continue')])
             </button>
             <!--end::Submit button-->

@@ -27,9 +27,10 @@ class CategoriesSeeder extends Seeder
     public function data()
     {
         return [
-            ['nama' => 'Makanan', 'kode' => 'makanan'],
-            ['nama' => 'Bahan Pangan', 'kode' => 'bahan-pangan'],
-            ['nama' => 'Minuman', 'kode' => 'minuman'],
+            ['nama' => 'Sabun', 'kode' => 'sabun'],
+            ['nama' => 'Mie Instant', 'kode' => 'mie-instant'],
+            ['nama' => 'Beras', 'kode' => 'beras'],
+            ['nama' => 'Minyak Goreng', 'kode' => 'minyak-goreng'],
         ];
     }
 }

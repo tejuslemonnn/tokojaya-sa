@@ -3,6 +3,6 @@
 <!--end::Table-->
 
 {{-- Inject Scripts --}}
-@section('scripts')
+@push('scripts')
     {{ $dataTable->scripts() }}
-@endsection
+@endpush

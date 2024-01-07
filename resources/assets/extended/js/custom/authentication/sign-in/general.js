@@ -14,14 +14,14 @@ var KTSigninGeneral = function () {
             form,
             {
                 fields: {
-                    'email': {
+                    'username': {
                         validators: {
                             notEmpty: {
-                                message: 'Email address is required'
+                                message: 'username address is required'
                             },
-                            emailAddress: {
-                                message: 'The value is not a valid email address'
-                            }
+                            // emailAddress: {
+                            //     message: 'The value is not a valid email address'
+                            // }
                         }
                     },
                     'password': {
@@ -74,7 +74,7 @@ var KTSigninGeneral = function () {
                                 }
                             }).then(function (result) {
                                 if (result.isConfirmed) {
-                                    form.querySelector('[name="email"]').value = "";
+                                    form.querySelector('[name="username"]').value = "";
                                     form.querySelector('[name="password"]').value = "";
                                     window.location.reload();
                                 }

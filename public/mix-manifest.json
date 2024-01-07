@@ -15,6 +15,7 @@
     "/demo1/js/custom/authentication/password-reset/new-password.js": "/demo1/js/custom/authentication/password-reset/new-password.js",
     "/demo1/js/custom/authentication/password-reset/password-reset.js": "/demo1/js/custom/authentication/password-reset/password-reset.js",
     "/demo1/js/custom/authentication/sign-in/general.js": "/demo1/js/custom/authentication/sign-in/general.js",
+    "/demo1/js/custom/authentication/sign-in/sign-in.js": "/demo1/js/custom/authentication/sign-in/sign-in.js",
     "/demo1/js/custom/authentication/sign-up/general.js": "/demo1/js/custom/authentication/sign-up/general.js",
     "/demo1/js/custom/modals/two-factor-authentication.js": "/demo1/js/custom/modals/two-factor-authentication.js",
     "/demo1/js/custom/widgets.js": "/demo1/js/custom/widgets.js",

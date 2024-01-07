@@ -61,9 +61,9 @@
                     <div class="row">
                         <!--begin::Col-->
                         <div class="col-lg fv-row">
-                            <input type="text" name="nama_barang"
+                            <input type="text" name="nama_produk"
                                 class="form-control form-control-lg form-control-solid" placeholder="Nama Barang"
-                                value="{{ $product->nama_barang }}"
+                                value="{{ $product->nama_produk }}"
                                 style="-webkit-appearance: none;margin: 0;-moz-appearance: textfield;" disabled />
                         </div>
                         <!--end::Col-->
@@ -140,7 +140,7 @@
 
         <!--begin::Actions-->
         <div class="card-footer d-flex justify-content-end py-6 px-9">
-            <a href="{{ url()->previous() }}" class="btn btn-danger" id="kt_account_profile_details_submit">
+            <a href="{{ route('products.index') }}" class="btn btn-danger" id="kt_account_profile_details_submit">
                 @include('partials.general._button-indicator', ['label' => __('Back')])
             </a>
         </div>

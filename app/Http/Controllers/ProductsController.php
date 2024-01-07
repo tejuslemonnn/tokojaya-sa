@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Satuan;
 use App\Models\Product;
+use App\Models\Category;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use App\DataTables\ProductsDataTable;
-use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
@@ -42,6 +44,7 @@ class ProductsController extends Controller
     {
         return view('pages.products.create', [
             'categories' => Category::all(),
+            'satuans' => Satuan::all()
         ]);
     }
 
@@ -49,13 +52,16 @@ class ProductsController extends Controller
     {
         $requestData = $request->validate([
             'kode'          => ['required'],
-            'nama_barang'   => ['required'],
+            'nama_produk'   => ['required'],
             'kategori_id'      => ['required'],
+            'satuan_id'      => ['required'],
             'harga'         => ['required'],
             'stok'          => ['required']
         ]);
 
-        $requestData['foto'] = $this->upload();
+        if ($request->hasFile('foto')) {
+            $requestData['foto'] = $this->upload();
+        }
 
         Product::create($requestData);
 
@@ -73,7 +79,8 @@ class ProductsController extends Controller
     {
         return view('pages.products.edit', [
             'product' => Product::with('category')->find($id),
-            'categories' => Category::all()
+            'categories' => Category::all(),
+            'satuans' => Satuan::all()
         ]);
     }
 
@@ -90,6 +97,25 @@ class ProductsController extends Controller
 
         $product->update($requestData);
 
-        return redirect()->intended('products')->with('success', 'Berhasil Update!');
+        return redirect()->intended('products')->with('success', 'Berhasil Mengupdate!');
+    }
+
+    public function cetakBarcode(Request $request)
+    {
+        if (empty($request->id_product) || $request->id_product == []) {
+            return redirect()->back()->with('error', 'Pilih produk dahulu!');
+        }
+
+        $products = array();
+        foreach ($request->id_product as $id) {
+            $product = Product::find($id);
+            $products[] = $product;
+        }
+
+        $no  = 1;
+        $pdf = app()->make(PDF::class);
+        $pdf->loadView('pages.products.barcode', compact('products', 'no'));
+        $pdf->setPaper('a4', 'potrait');
+        return $pdf->download('produk.pdf');
     }
 }

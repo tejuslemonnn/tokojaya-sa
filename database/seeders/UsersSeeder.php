@@ -19,11 +19,8 @@ class UsersSeeder extends Seeder
     public function run(Generator $faker)
     {
         $owner = User::create([
-            'first_name'        => "Owner",
-            'last_name'         => "Shop",
-            'email'             => 'owner@demo.com',
+            'username'          => "owner",
             'password'          => Hash::make('demo'),
-            'email_verified_at' => now(),
         ]);
 
         $this->addDummyInfo($faker, $owner);
@@ -31,11 +28,8 @@ class UsersSeeder extends Seeder
         $owner->assignRole('owner');
 
         $kasir = User::create([
-            'first_name'        => "Kasir",
-            'last_name'         => "",
-            'email'             => 'kasir@demo.com',
+            'username'          => "kasir",
             'password'          => Hash::make('demo'),
-            'email_verified_at' => now(),
         ]);
 
         $this->addDummyInfo($faker, $kasir);
@@ -43,11 +37,8 @@ class UsersSeeder extends Seeder
         $kasir->assignRole('kasir');
 
         $kepalaKasir = User::create([
-            'first_name'        => "Kepala",
-            'last_name'         => "Kasir",
-            'email'             => 'kepala-kasir@demo.com',
+            'username'          => "kepala-kasir",
             'password'          => Hash::make('demo'),
-            'email_verified_at' => now(),
         ]);
 
         $this->addDummyInfo($faker, $kepalaKasir);
@@ -58,11 +49,8 @@ class UsersSeeder extends Seeder
     private function addDummyInfo(Generator $faker, User $user)
     {
         $dummyInfo = [
-            'company'  => $faker->company,
             'phone'    => $faker->phoneNumber,
-            'website'  => $faker->url,
-            'language' => $faker->languageCode,
-            'country'  => $faker->countryCode,
+            'address'    => $faker->address,
         ];
 
         $info = new UserInfo();

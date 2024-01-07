@@ -10,6 +10,11 @@ class UserInfo extends Model
 {
     use SpatieLogsActivity;
 
+    protected $fillable = [
+        'phone',
+        'address',
+        'user_id'
+    ];
     /**
      * Prepare proper error handling for url attribute
      *

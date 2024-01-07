@@ -23,7 +23,7 @@ class RolesPermissionsSeeder extends Seeder
             ]);
         }
         
-        Role::create(['name' => 'owner'])->givePermissionTo('manage account', 'manage shop', 'manage sale');
+        Role::create(['name' => 'owner'])->givePermissionTo('manage account');
         Role::create(['name' => 'kepala-kasir'])->givePermissionTo('manage shop');
         Role::create(['name' => 'kasir'])->givePermissionTo('manage sale');
     }

@@ -17,11 +17,14 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('kategori_id');
             $table->foreign('kategori_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
-            $table->longText('foto');
+            $table->unsignedBigInteger('satuan_id');
+            $table->foreign('satuan_id')->references('id')->on('satuans')->onUpdate('cascade')->onDelete('cascade');
+            $table->longText('foto')->nullable();
             $table->integer('kode');
-            $table->string('nama_barang');
+            $table->string('nama_produk');
             $table->integer('harga');
-            $table->integer('stok');
+            $table->float('stok');
+            $table->tinyInteger('diskon')->default(0);
             $table->timestamps();
         });
     }
