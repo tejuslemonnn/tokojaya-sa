@@ -54,6 +54,7 @@ class UsersSeeder extends Seeder
         $dummyInfo = [
             'phone'    => $faker->phoneNumber,
             'address'    => $faker->address,
+            'shift' => rand(0, 2),
         ];
 
         $info = new UserInfo();

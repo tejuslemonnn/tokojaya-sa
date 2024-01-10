@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Models\User;
 use App\Models\UserInfo;
 use Illuminate\Http\Request;
 use App\DataTables\UserDataTable;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Validation\Rules\Password;
+use Yajra\DataTables\Contracts\DataTable;
 use App\Http\Requests\Account\SettingsInfoRequest;
 
 class UsersController extends Controller
@@ -19,9 +23,19 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(UserDataTable $datatable)
+    public function index()
     {
-        return $datatable->render('pages.users.index');
+
+        return view('pages.users.index');
+    }
+
+    public function usersTable(UserDataTable $dataTable, Request $request)
+    {
+        $shift = $request->input('shift');
+
+        return $dataTable->with([
+            'shift' => $shift
+        ])->ajax();
     }
 
     /**
@@ -46,12 +60,14 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'password' => ['required', Password::defaults()],
             'role' => 'required|string|max:255',
         ]);
 
         $user = User::create([
+            'name' => $request->name,
             'username' => $validated['username'],
             'password' => Hash::make($validated['password']),
         ]);
@@ -64,7 +80,7 @@ class UsersController extends Controller
             'address' => $request->address,
         ]);
 
-        return redirect()->intended('users')->with('success', 'Berhasil Menambahkan!');
+        return redirect()->intended('/users')->with('success', 'Berhasil Menambahkan!');
     }
 
     /**

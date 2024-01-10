@@ -18,9 +18,17 @@ use Carbon\Carbon;
 
 class LaporanController extends Controller
 {
-    public function index(LaporanDataTable $datatable)
+    public function index()
     {
-        return $datatable->render('pages.laporan.index');
+        return view('pages.laporan.index');
+    }
+
+    public function laporansTable(LaporanDataTable $dataTable, Request $request){
+        $shift = $request->input('shift');
+
+        return $dataTable->with([
+            'shift' => $shift
+        ])->ajax();
     }
 
     public function returnProductDataTable()
@@ -119,5 +127,15 @@ class LaporanController extends Controller
 
 
         return redirect()->back()->with('success', 'Berhasil return produk!');
+    }
+
+    public function pdf($no_lapran){
+        $laporan = Laporan::where('no_laporan', $no_lapran)->first();
+        
+
+        $pdf = Pdf::loadView('pages.laporan.pdf', [
+            'laporan' => $laporan
+        ])->setPaper('a4', 'potrait');
+        return $pdf->download('Laporan_' . $laporan->no_laporan . '.pdf');
     }
 }

@@ -11,6 +11,7 @@ class UserInfo extends Model
     use SpatieLogsActivity;
 
     protected $fillable = [
+        'name',
         'phone',
         'address',
         'user_id'

@@ -36,10 +36,14 @@
                     <p>{{ $laporan->kasir->username }}</p>
                 </div>
 
-                <div class="col-2 text-end">
+                <div class="col-2 text-end d-flex">
                     <a href="{{ route('invoice', $laporan->no_laporan) }}" class="btn btn-sm btn-primary"
                         target="_blank">
                         Struk
+                    </a>
+
+                    <a href="{{ route('laporan.pdf', $laporan->no_laporan) }}" class="btn btn-sm btn-danger mx-2">
+                        PDF
                     </a>
                 </div>
 

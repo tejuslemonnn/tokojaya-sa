@@ -2,6 +2,20 @@
 
     <!--begin::Card-->
     <div class="card">
+        {{-- begin:Card Header --}}
+        <div class="card-header pt-6 d-flex justify-content-between">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-penjualan-tab" data-bs-toggle="tab"
+                        data-bs-target="#nav-penjualan" type="button" role="tab" aria-controls="nav-penjualan"
+                        aria-selected="true">Penjualan</button>
+                    <button class="nav-link" id="nav-return-tab" data-bs-toggle="tab" data-bs-target="#nav-return"
+                        type="button" role="tab" aria-coFntrols="nav-return" aria-selected="false">Return</button>
+                </div>
+            </nav>
+        </div>
+        {{-- end:Card Header --}}
+
         <!--begin::Card body-->
         <div class="card-body pt-6">
             @if (Session::has('success'))
@@ -33,84 +47,118 @@
                 </div>
             @endif
 
-            <div class="form-group row mb-3">
-                <label for="kode" class="col-lg-2 control-label">Kode Barang</label>
-                <div class="col-lg-4 d-flex">
-                    <form action="{{ route('cashier.addCart') }}" method="post" class="d-flex">
-                        @csrf
-                        <input type="text" name="kode" class="form-control"
-                            style="border-top-right-radius: 0px;border-bottom-right-radius: 0px">
-                        <button type="submit" class="btn btn-sm btn-primary"
-                            style="border-top-left-radius: 0px;border-bottom-left-radius: 0px"><i
-                                class="fa fa-arrow-right"></i></button>
-                    </form>
-                    <button class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal"
-                        data-bs-target="#productModal">List
-                        Products</button>
-                    <button class="btn btn-sm btn-dark" id="barcode" data-bs-toggle="modal"
-                        data-bs-target="#qrCodeModal">
-                        <img src="{{ asset('demo1/media/icons/duotune/ecommerce/ecm010.svg') }}" alt="Barcode"
-                            style="fill: white;">
-                    </button>
-                </div>
-            </div>
+            <div class="tab-content" id="nav-tabContent">
 
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body border">
-                            @include('partials.widgets.master._table')
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body border" style="padding: 1rem 1.25rem !important">
-                            <form action="{{ route('cashier.cetakStruk') }}" method="POST" id="cetakStrukForm">
+                {{-- begin:tab penjualan --}}
+                <div class="tab-pane fade show active" id="nav-penjualan" role="tabpanel"
+                    aria-labelledby="nav-penjualan-tab" tabindex="0">
+
+                    <!--begin::Form Kode Barang-->
+                    <div class="form-group row mb-3">
+                        <label for="kode" class="col-lg-2 control-label">Kode Barang</label>
+                        <div class="col-lg-4 d-flex">
+                            <form action="{{ route('cashier.addCart') }}" method="post" class="d-flex">
                                 @csrf
-                                <div class="form-group row text-center mb-3">
-                                    <label for="total" class="col-3 control-label">Total</label>
-                                    <div class="col-8">
-                                        <input type="number" min="0" id="total"
-                                            class="form-control bg-secondary" readonly
-                                            value="{{ !empty($cashier) ? $cashier->total_bayar : 0 }}.00"
-                                            name="total">
-                                    </div>
-                                </div>
-                                <div class="form-group row text-center mb-3">
-                                    <label for="bayar" class="col-3 control-label">Bayar</label>
-                                    <div class="col-8">
-                                        <input type="number" min="0" id="bayar" name="bayar"
-                                            class="form-control" name="bayar" value="0">
-                                    </div>
-                                </div>
-                                <div class="form-group row text-center mb-3">
-                                    <label for="kembali" class="col-3 control-label">Kembali</label>
-                                    <div class="col-8">
-                                        <input type="number" min="0" id="kembali"
-                                            class="form-control bg-secondary" value="{{ old('kembali') ?? 0 }}" readonly
-                                            name="kembali">
-                                    </div>
-                                </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <button data-bs-toggle="modal" data-bs-target="#batalPesananModal" type="button"
-                                        class="btn btn-sm me-2  {{ empty($cashier) ? 'btn-secondary' : 'btn-danger' }}"
-                                        data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
-                                        title="{{ empty($cashier) ? 'Produk belum ada!' : 'Batalkan Pesanan' }}">Batal
-                                        Pesanan</button>
-
-                                    <button type="button"
-                                        class="btn btn-sm {{ empty($cashier) ? 'btn-secondary' : 'btn-success' }}"
-                                        data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
-                                        title="{{ empty($cashier) ? 'Produk belum ada!' : 'Cetak Struk' }}"
-                                        id="{{ empty($cashier) ? '' : 'cetakStrukButton' }}">Cetak Struk</button>
-
-                                </div>
+                                <input type="text" name="kode" class="form-control"
+                                    style="border-top-right-radius: 0px;border-bottom-right-radius: 0px">
+                                <button type="submit" class="btn btn-sm btn-primary"
+                                    style="border-top-left-radius: 0px;border-bottom-left-radius: 0px"><i
+                                        class="fa fa-arrow-right"></i></button>
                             </form>
+                            <button class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal"
+                                data-bs-target="#productModal">List
+                                Products</button>
+                            <button class="btn btn-sm btn-dark" id="barcode" data-bs-toggle="modal"
+                                data-bs-target="#qrCodeModal">
+                                <img src="{{ asset('demo1/media/icons/duotune/ecommerce/ecm010.svg') }}" alt="Barcode"
+                                    style="fill: white;">
+                            </button>
+                        </div>
+                    </div>
+                    <!--end::form Kode Barang-->
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body border">
+                                    @include('partials.widgets.master._table')
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body border" style="padding: 1rem 1.25rem !important">
+                                    <form action="{{ route('cashier.cetakStruk') }}" method="POST" id="cetakStrukForm">
+                                        @csrf
+                                        <div class="form-group row text-center mb-3">
+                                            <label for="total" class="col-3 control-label">Total</label>
+                                            <div class="col-8">
+                                                <input type="number" min="0" id="total"
+                                                    class="form-control bg-secondary" readonly
+                                                    value="{{ !empty($cashier) ? $cashier->total_bayar : 0 }}.00"
+                                                    name="total">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row text-center mb-3">
+                                            <label for="bayar" class="col-3 control-label">Bayar</label>
+                                            <div class="col-8">
+                                                <input type="number" min="0" id="bayar" name="bayar"
+                                                    class="form-control" name="bayar" value="0">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row text-center mb-3">
+                                            <label for="kembali" class="col-3 control-label">Kembali</label>
+                                            <div class="col-8">
+                                                <input type="number" min="0" id="kembali"
+                                                    class="form-control bg-secondary" value="{{ old('kembali') ?? 0 }}"
+                                                    readonly name="kembali">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end">
+                                            <button data-bs-toggle="modal" data-bs-target="#batalPesananModal"
+                                                type="button"
+                                                class="btn btn-sm me-2  {{ empty($cashier) ? 'btn-secondary' : 'btn-danger' }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="left"
+                                                data-bs-trigger="hover"
+                                                title="{{ empty($cashier) ? 'Produk belum ada!' : 'Batalkan Pesanan' }}">Batal
+                                                Pesanan</button>
+
+                                            <button type="button"
+                                                class="btn btn-sm {{ empty($cashier) ? 'btn-secondary' : 'btn-success' }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="left"
+                                                data-bs-trigger="hover"
+                                                title="{{ empty($cashier) ? 'Produk belum ada!' : 'Cetak Struk' }}"
+                                                id="{{ empty($cashier) ? '' : 'cetakStrukButton' }}">Cetak
+                                                Struk</button>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {{-- end:tab penjualan --}}
+
+                {{-- begin:tab return --}}
+                <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab"
+                    tabindex="0">
+                    <!--begin::form no penjualan-->
+                    <div class="form-group row mb-3">
+                        <label for="no_struk" class="col-lg-2 control-label">No Struk</label>
+                        <div class="col-lg-4 d-flex">
+                            <input type="text" name="no_struk" class="form-control"
+                                style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noStruk">
+                            <button type="submit" class="btn btn-sm btn-primary"
+                                style="border-top-left-radius: 0px;border-bottom-left-radius: 0px" id="btnStruk"><i
+                                    class="fa fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    <!--end::form no penjualan-->
+                </div>
+                {{-- end:tab return --}}
+
             </div>
         </div>
         <!--end::Card body-->
@@ -118,7 +166,8 @@
     <!--end::Card-->
 
     <!-- Modal Products-->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -204,9 +253,7 @@
                     <div class="modal-body">
                         <p class="fw-bold">Kepala Kasir</p>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Username Kepala Kasir"
-                                aria-label="Username Kepala Kasir" aria-describedby="basic-addon1" name="username">
-                            <input type="text" class="form-control" placeholder="Password Kepala Kasir"
+                            <input type="password" class="form-control" placeholder="Password Kepala Kasir"
                                 aria-label="Password Kepala Kasir" aria-describedby="basic-addon1" name="password">
                         </div>
                     </div>
@@ -247,6 +294,7 @@
             html5QrcodeScanner.render(onScanSuccess);
 
             $(document).ready(function() {
+                /* begin::cashier */
                 $('#kembali').val({!! !empty($cashier) ? 0 - $cashier->total_bayar : 0 !!});
 
                 $('#cashier-table').on('change', '.satuan', function() {
@@ -325,6 +373,27 @@
                     var total = $('#total').val();
                     $('#kembali').val(changedValue - total);
                 });
+                /* end::cashier */
+
+                /* begin::return */
+                $('#btnStruk').click(function (e) { 
+                    var noStruk = $('#noStruk').val();
+
+                    $.ajax({
+                        type: "GET",
+                        url: "{{route('return.showReturn')}}",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            noStruk: noStruk
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            console.log(response);
+                        }
+                    });
+                });
+                /* end::return */
+                
             });
 
             function debounce(func, delay) {

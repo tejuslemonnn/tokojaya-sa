@@ -18,6 +18,30 @@
                 <!--begin::Input group-->
                 <div class="row mb-6">
                     <!--begin::Label-->
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Name') }}</label>
+                    <!--end::Label-->
+
+                    <!--begin::Col-->
+                    <div class="col-lg-8">
+                        <!--begin::Row-->
+                        <div class="row">
+                            <!--begin::Col-->
+                            <div class="col-lg fv-row">
+                                <input type="text" name="name"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Name"
+                                    value="{{ old('name') }}" />
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+                    </div>
+                    <!--end::Col-->
+                </div>
+                <!--end::Input group-->
+
+                <!--begin::Input group-->
+                <div class="row mb-6">
+                    <!--begin::Label-->
                     <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Username') }}</label>
                     <!--end::Label-->
 
@@ -81,7 +105,8 @@
                             class="form-select form-select-solid form-select-lg fw-bold" required>
                             <option value="">{{ __('Pilih role...') }}</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->name }}" {{$role->name == old('role') ? 'selected' : ''}}>
+                                <option value="{{ $role->name }}"
+                                    {{ $role->name == old('role') ? 'selected' : '' }}>
                                     {{ $role->name }}</option>
                             @endforeach
                         </select>
@@ -107,7 +132,7 @@
                                     <span class="input-group-text" id="basic-addon1">+62</span>
                                     <input type="text" name="phone"
                                         class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
-                                        placeholder="No.Telp" value="{{ old('phone')}}" required />
+                                        placeholder="No.Telp" value="{{ old('phone') }}" required />
                                 </div>
                             </div>
                             <!--end::Col-->
@@ -147,7 +172,8 @@
 
             <!--begin::Actions-->
             <div class="card-footer d-flex justify-content-end py-6 px-9">
-                <a href="{{ route('users.index') }}" class="btn btn-danger me-2" id="kt_account_profile_details_submit">
+                <a href="{{ route('users.index') }}" class="btn btn-danger me-2"
+                    id="kt_account_profile_details_submit">
                     @include('partials.general._button-indicator', ['label' => __('Back')])
                 </a>
                 <button type="submit" class="btn btn-success" id="kt_account_profile_details_submit">

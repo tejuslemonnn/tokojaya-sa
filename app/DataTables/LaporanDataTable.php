@@ -28,6 +28,9 @@ class LaporanDataTable extends DataTable
             ->editColumn('user_id', function (Laporan $model) {
                 return $model->kasir->username;
             })
+            ->editColumn('shift_kerja', function (Laporan $model) {
+                return $model->kasir->info->shift;
+            })
             ->editColumn('created_at', function (Laporan $model) {
                 return Carbon::parse($model->created_at)->format('d-M-Y H:i');
             })
@@ -38,7 +41,8 @@ class LaporanDataTable extends DataTable
                     'editUrl' => route('laporan.edit', $model->id),
                     'model' => $model
                 ]);
-            });
+            })
+            ;
     }
 
     /**
@@ -49,7 +53,15 @@ class LaporanDataTable extends DataTable
      */
     public function query(Laporan $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->leftJoin('user_infos', 'laporans.user_id', '=', 'user_infos.user_id')
+            ->select(
+                'laporans.*',
+                'user_infos.shift as shift_kerja'
+            )
+            ->when(intval($this->shift), function ($query, $shift) {
+                return $query->where('user_infos.shift', $shift);
+            });
     }
 
     /**
@@ -62,7 +74,7 @@ class LaporanDataTable extends DataTable
         return $this->builder()
             ->setTableId('category-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax(route('laporans.table'))
             ->stateSave(true)
             ->orderBy(2)
             ->responsive()
@@ -81,6 +93,7 @@ class LaporanDataTable extends DataTable
         return [
             Column::make('no_laporan'),
             Column::make('user_id')->title('Kasir'),
+            Column::make('shift_kerja'),
             Column::make('created_at')->title('Tanggal'),
             Column::computed('action')
                 ->exportable(false)

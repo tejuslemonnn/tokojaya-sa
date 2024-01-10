@@ -50,10 +50,10 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @return string
      */
-    public function getNameAttribute()
-    {
-        return "{$this->first_name} {$this->last_name}";
-    }
+    // public function getNameAttribute()
+    // {
+    //     return "{$this->info->name}";
+    // }
 
     /**
      * Prepare proper error handling for url attribute

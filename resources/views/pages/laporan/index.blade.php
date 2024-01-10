@@ -2,17 +2,8 @@
 
     <!--begin::Card-->
     <div class="card">
-        <!--begin::Card body-->
-        <div class="card-body pt-6">
-            @if (Session::has('success'))
-                <div class="alert alert-success">
-                    {{ Session::get('success') }}
-                    @php
-                        Session::forget('success');
-                    @endphp
-                </div>
-            @endif
 
+        <div class="card-header pt-6 d-flex justify-content-between">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-link active" id="nav-penjualan-tab" data-bs-toggle="tab"
@@ -22,14 +13,55 @@
                         type="button" role="tab" aria-coFntrols="nav-return" aria-selected="false">Return</button>
                 </div>
             </nav>
+        </div>
+        <!--begin::Card body-->
+        <div class="card-body pt-6">
+
+            @if (Session::has('success'))
+                <div class="alert alert-success">
+                    {{ Session::get('success') }}
+                    @php
+                        Session::forget('success');
+                    @endphp
+                </div>
+            @endif
+
             <div class="tab-content" id="nav-tabContent">
+
                 <div class="tab-pane fade show active" id="nav-penjualan" role="tabpanel"
                     aria-labelledby="nav-penjualan-tab" tabindex="0">
-                    @include('partials.widgets.master._table')
+                    <div class="row d-flex justify-content-end">
+                        <div class="col-4 col-sm-2">
+                            <div class="me-3">
+                                <select id="shiftFilter" class="form-select" name="shift">
+                                    <option value="" selected>All Shifts</option>
+                                    <option value="1">Shift Pagi</option>
+                                    <option value="2">Shift Malam</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="laporans-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>No Laporan</th>
+                                    <th>Kasir</th>
+                                    <th>Shift Kerja</th>
+                                    <th>created_at</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <!-- DataTable Body will be loaded dynamically by JavaScript -->
+                        </table>
+                    </div>
                 </div>
+
                 <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab"
                     tabindex="0">
-                    <table id="returnProductTable" class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" style="width:100%">
+                    <table id="returnProductTable"
+                        class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" style="width:100%">
                         <thead>
                             <tr>
                                 <th>No Laporan</th>
@@ -38,11 +70,11 @@
                                 <th>Satuan</th>
                                 <th>Deskripsi</th>
                                 <th>Tanggal</th>
-                                {{-- <th>Action</th> --}}
                             </tr>
                         </thead>
                     </table>
                 </div>
+
             </div>
         </div>
         <!--end::Card body-->
@@ -52,9 +84,52 @@
     @push('scripts')
         <script>
             $(document).ready(function() {
-                $('#returnProductTable').DataTable({
+                
+                var laporansTable = $('#laporans-table').DataTable({
+                    processing: true,
                     serverSide: true,
-                    processing:true,
+                    ajax: {
+                        url: '{{ route('laporan.table') }}',
+                        data: function(d) {
+                            var shiftValue = $('#shiftFilter').val();
+                            d.shift = shiftValue;
+                        }
+                    },
+                    columns: [{
+                            data: 'no_laporan',
+                            name: 'no_laporan'
+                        },
+                        {
+                            data: 'user_id',
+                            name: 'user_id'
+                        },
+                        {
+                            data: 'shift_kerja',
+                            name: 'shift_kerja'
+                        },
+                        {
+                            data: 'created_at',
+                            name: 'created_at'
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        },
+                    ],
+                    order: [
+                        [0, 'asc']
+                    ],
+                });
+
+                $('#shiftFilter').on('change', function() {
+                    laporansTable.draw();
+                });
+
+                var returnProductTable = $('#returnProductTable').DataTable({
+                    serverSide: true,
+                    processing: true,
                     ajax: '{{ route('returnProductDatatable') }}',
                     columns: [{
                             data: 'no_laporan',
@@ -88,6 +163,7 @@
                         // },
                     ],
                 });
+                
             });
         </script>
     @endpush

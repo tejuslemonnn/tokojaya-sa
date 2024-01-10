@@ -11,12 +11,10 @@ use App\Http\Controllers\Auth\SocialiteLoginController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Documentation\ReferencesController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ReturnProductController;
 use App\Http\Controllers\SatuanController;
-use App\Models\Laporan;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::group(['middleware' => ['permission:manage shop|manage account']], function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::resource('laporan', LaporanController::class);
+        Route::get('/laporan-table', [LaporanController::class, 'laporansTable'])->name('laporan.table');
+        Route::get('pdf/${no_laporan}', [LaporanController::class, 'pdf'])->name('laporan.pdf');
         Route::resource('categories', CategoriesController::class);
         Route::resource('satuans', SatuanController::class);
     });
@@ -66,13 +66,14 @@ Route::middleware('auth')->group(function () {
     });
 
     // Logs pages
-    // Route::group(['middleware' => ['role:owner']], function () {
-        //     Route::prefix('log')->name('log.')->group(function () {
-    //         Route::resource('system', SystemLogsController::class)->only(['index', 'destroy']);
-    //         Route::resource('audit', AuditLogsController::class)->only(['index', 'destroy']);
-    //     });
-    //     Route::resource('users', UsersController::class);
-    // });
+    Route::group(['middleware' => ['role:owner']], function () {
+        Route::prefix('log')->name('log.')->group(function () {
+            Route::resource('system', SystemLogsController::class)->only(['index', 'destroy']);
+            Route::resource('audit', AuditLogsController::class)->only(['index', 'destroy']);
+        });
+        Route::resource('users', UsersController::class);
+        Route::get('/users-table', [UsersController::class, 'usersTable'])->name('users.table');
+    });
 
 
     Route::group(['middleware' => ['permission:manage shop']], function () {
@@ -93,6 +94,12 @@ Route::middleware('auth')->group(function () {
             Route::post('cetakStruk', [CashierController::class, 'cetakStruk'])->name('cashier.cetakStruk');
             Route::get('change-category', [CashierController::class, 'changeSatuan'])->name('cashier.changeSatuan');
         });
+
+        Route::group(['prefix' => 'return'], function () {
+            Route::get('show', [ReturnProductController::class, 'showReturn'])->name('return.showReturn');
+        });
+
+
     });
 
     Route::get('invoice/{id}', [LaporanController::class, 'invoice'])->name('invoice');

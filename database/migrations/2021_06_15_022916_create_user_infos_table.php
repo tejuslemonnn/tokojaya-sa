@@ -19,6 +19,7 @@ class CreateUserInfosTable extends Migration
             $table->text('avatar')->nullable();
             $table->string('phone');
             $table->string('address');
+            $table->enum('shift', ['Shift Pagi', 'Shift Malam']);
             $table->timestamps();
         });
     }

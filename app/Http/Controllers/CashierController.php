@@ -143,12 +143,11 @@ class CashierController extends Controller
     {
         $request->validate([
             'password' => ['required'],
-            'username' => ['required'],
         ]);
 
-        $user = User::where('username', $request->input('username'))->first();
+        $user = User::role('kepala-kasir')->first();
 
-        if ($user && Hash::check($request->input('password'), $user->password) && $user->hasRole('kepala-kasir')) {
+        if ($user && Hash::check($request->password, $user->password)) {
             Cashier::where('user_id', auth()->user()->id)->delete();
             return redirect()->back()->with('success', 'Membatalkan Pesanan!');
         } else {

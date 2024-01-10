@@ -23,7 +23,13 @@ class UserDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->setRowId('id')
+            // ->setRowId('id')
+            ->editColumn('name', function (User $user) {
+                return $user->name;
+            })
+            ->editColumn('shift_kerja', function (User $user) {
+                return $user->info->shift;
+            })
             ->editColumn('username', function (User $user) {
                 return $user->username;
             })
@@ -70,6 +76,8 @@ class UserDataTable extends DataTable
             ->leftJoin('user_infos', 'users.id', '=', 'user_infos.user_id')
             ->select(
                 'users.id',
+                'users.name',
+                'user_infos.shift as shift_kerja',
                 'users.username',
                 'users.created_at',
                 'user_infos.address',
@@ -77,8 +85,11 @@ class UserDataTable extends DataTable
                 DB::raw('GROUP_CONCAT(DISTINCT roles.name) as role'),
                 DB::raw('GROUP_CONCAT(DISTINCT permissions.name) as permissions')
             )
-            ->groupBy('users.id', 'users.username', 'users.created_at', 'user_infos.address', 'user_infos.phone')
-            ->where('users.id', '!=', Auth::id());
+            ->groupBy('users.id', 'users.name', 'user_infos.shift',  'users.username', 'users.created_at', 'user_infos.address', 'user_infos.phone')
+            ->where('users.id', '!=', Auth::id())
+            ->when(intval($this->shift), function ($query, $shift) {
+                return $query->where('user_infos.shift', $shift);
+            });
     }
 
     /**
@@ -91,7 +102,7 @@ class UserDataTable extends DataTable
         return $this->builder()
             ->setTableId('user-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax(route('users.table'))
             ->orderBy(1)
             ->responsive()
             ->autoWidth(false)
@@ -107,7 +118,8 @@ class UserDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            Column::make('id'),
+            Column::make('name'),
+            Column::make('shift_kerja'),
             Column::make('username'),
             Column::make('role'),
             Column::make('permissions'),
