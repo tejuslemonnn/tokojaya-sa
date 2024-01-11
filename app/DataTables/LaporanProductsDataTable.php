@@ -62,7 +62,7 @@ class LaporanProductsDataTable extends DataTable
      */
     public function query(LaporanProducts $model, Request $request)
     {
-        $noLaporan = $request->segment(2);
+        $noLaporan = $this->no_laporan ?? $request->segment(2);
 
         $laporan = Laporan::where('no_laporan', $noLaporan)->first();
 

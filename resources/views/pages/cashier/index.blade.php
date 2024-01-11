@@ -144,8 +144,9 @@
                 {{-- begin:tab return --}}
                 <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab"
                     tabindex="0">
+
                     <!--begin::form no penjualan-->
-                    <div class="form-group row mb-3">
+                    <div class="form-group row mb-3 d-flex justi">
                         <label for="no_struk" class="col-lg-2 control-label">No Struk</label>
                         <div class="col-lg-4 d-flex">
                             <input type="text" name="no_struk" class="form-control"
@@ -156,6 +157,72 @@
                         </div>
                     </div>
                     <!--end::form no penjualan-->
+
+                    <!--begin::card-->
+                    <div class="row">
+                        <div class="col-md-8"><!--begin::table-->
+                            <div class="table-responsive">
+                                <table id="returnProducts-table" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Produk</th>
+                                            <th>Jumlah</th>
+                                            <th>Satuan</th>
+                                            <th>Sub Total</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <!-- DataTable Body will be loaded dynamically by JavaScript -->
+                                </table>
+                            </div>
+                            <!--end::table-->
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body border" style="padding: 1rem 1.25rem !important">
+                                    <form action="" method="GET">
+                                        @csrf
+                                        <div class="form-group row text-center mb-3">
+                                            <label for="totalReturn" class="col-3 control-label">Total</label>
+                                            <div class="col-8">
+                                                <input type="number" min="0" id="totalReturn"
+                                                    class="form-control bg-secondary" readonly name="totalReturn">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row text-center mb-3">
+                                            <label for="bayarReturn" class="col-3 control-label">Bayar</label>
+                                            <div class="col-8">
+                                                <input type="number" min="0" id="bayarReturn"
+                                                    name="bayarReturn" class="form-control" name="bayarReturn"
+                                                    value="0">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row text-center mb-3">
+                                            <label for="kembaliReturn" class="col-3 control-label">Kembali</label>
+                                            <div class="col-8">
+                                                <input type="number" min="0" id="kembaliReturn"
+                                                    class="form-control bg-secondary" readonly name="kembaliReturn">
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end">
+                                            <button data-bs-toggle="modal" data-bs-target="#batalPesananModal"
+                                                type="button" class="btn btn-sm me-2" data-bs-toggle="tooltip"
+                                                data-bs-placement="left" data-bs-trigger="hover"
+                                                title="Batal Return">Batal
+                                                Return</button>
+
+                                            <button type="button" class="btn btn-sm" data-bs-toggle="tooltip"
+                                                data-bs-placement="left" data-bs-trigger="hover">Return
+                                                Pesanan</button>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::card-->
                 </div>
                 {{-- end:tab return --}}
 
@@ -376,24 +443,59 @@
                 /* end::cashier */
 
                 /* begin::return */
-                $('#btnStruk').click(function (e) { 
+
+                $('#returnProducts-table').DataTable({})
+
+                $('#btnStruk').click(function(e) {
                     var noStruk = $('#noStruk').val();
 
                     $.ajax({
                         type: "GET",
-                        url: "{{route('return.showReturn')}}",
+                        url: "{{ route('return.showReturn') }}",
                         data: {
                             _token: '{{ csrf_token() }}',
                             noStruk: noStruk
                         },
                         dataType: "json",
-                        success: function (response) {
-                            console.log(response);
+                        success: function(response) {
+                            $('#returnProducts-table').DataTable().destroy();
+
+                            $('#returnProducts-table').DataTable({
+                                processing: true,
+                                data: response.datatable.original.
+                                data,
+                                columns: [{
+                                        data: 'nama_produk',
+                                        name: 'nama_produk'
+                                    },
+                                    {
+                                        data: 'jumlah',
+                                        name: 'jumlah'
+                                    },
+                                    {
+                                        data: 'satuan',
+                                        name: 'satuan'
+                                    },
+                                    {
+                                        data: 'sub_total',
+                                        name: 'sub_total'
+                                    },
+                                    {
+                                        data: 'action',
+                                        name: 'action',
+                                        orderable: false,
+                                        searchable: false
+                                    },
+                                ],
+                                order: [
+                                    [0, 'asc']
+                                ],
+                            });
                         }
                     });
                 });
                 /* end::return */
-                
+
             });
 
             function debounce(func, delay) {
