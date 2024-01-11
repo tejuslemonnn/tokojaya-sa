@@ -26,7 +26,7 @@ class LaporanDataTable extends DataTable
                 return $model->no_laporan;
             })
             ->editColumn('user_id', function (Laporan $model) {
-                return $model->kasir->username;
+                return $model->kasir->name;
             })
             ->editColumn('shift_kerja', function (Laporan $model) {
                 return $model->kasir->info->shift;
@@ -41,8 +41,7 @@ class LaporanDataTable extends DataTable
                     'editUrl' => route('laporan.edit', $model->id),
                     'model' => $model
                 ]);
-            })
-            ;
+            });
     }
 
     /**
@@ -61,6 +60,12 @@ class LaporanDataTable extends DataTable
             )
             ->when(intval($this->shift), function ($query, $shift) {
                 return $query->where('user_infos.shift', $shift);
+            })
+            ->when($this->from_date, function ($query, $fromDate) {
+                return $query->whereDate('laporans.created_at', '>=', Carbon::parse($fromDate)->format('Y-m-d H:i:s'));
+            })
+            ->when($this->end_date, function ($query, $endDate) {
+                return $query->whereDate('laporans.created_at', '<=', Carbon::parse($endDate)->format('Y-m-d H:i:s'));
             });
     }
 

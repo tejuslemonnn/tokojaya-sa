@@ -40,7 +40,7 @@ class CashierController extends Controller
 
         $currentDate = now();
         $datePart = $currentDate->format('Ymd');
-        $latestLaporan = Laporan::latest()->first();
+        $latestLaporan = Laporan::latest('no_laporan')->first();
         $numericPart = $latestLaporan ? intval(substr($latestLaporan->no_laporan, -2)) + 1 : 1;
         $numericPartPadded = str_pad($numericPart, 2, '0', STR_PAD_LEFT);
         $newLaporanNo = $datePart . $numericPartPadded;

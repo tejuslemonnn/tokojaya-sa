@@ -26,8 +26,11 @@ class LaporanController extends Controller
     public function laporansTable(LaporanDataTable $dataTable, Request $request){
         $shift = $request->input('shift');
 
+
         return $dataTable->with([
-            'shift' => $shift
+            'shift' => $shift,
+            'from_date' => $request->from_date,
+            'end_date' => $request->end_date,
         ])->ajax();
     }
 
@@ -60,7 +63,7 @@ class LaporanController extends Controller
                 return $model->deskripsi;
             })
             ->editColumn('created_at', function (ReturnProduct $model) {
-                return Carbon::parse($model->created_at)->format('d-M-Y H:i');
+                return Carbon::parse($model->created_at)->format('Y-m-d H:i');
             })
             // ->addColumn('action', 'returnproduct.action')
             // ->rawColumns(['action'])

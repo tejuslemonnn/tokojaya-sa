@@ -127,21 +127,37 @@ class UsersController extends Controller
     {
         $user = User::find($id);
 
-        $validated = $request->validate([
+        $validated = [
+            'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
-            'password' => 'required|string|max:255',
             'role' => 'required|string|max:255',
-        ]);
+        ];
+
+        if (!empty($request->password)) {
+            $validated['password'] = ['required', Password::defaults()];
+        }
+
+        $validated = $request->validate($validated);
 
         $user->update([
+            'name' => $validated['name'],
             'username' => $validated['username'],
         ]);
+
+        if (!empty($request->password)) {
+            $user->update([
+                'password' => Hash::make($validated['password']),
+            ]);
+        }
 
         $user->syncRoles([$validated['role']]);
 
         $info = $user->info ?? new UserInfo();
 
-        $info->fill($request->only($info->getFillable()));
+        $info->update([
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
 
         $info->user()->associate($user);
 

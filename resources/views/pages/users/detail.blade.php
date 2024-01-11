@@ -16,6 +16,29 @@
             <!--begin::Input group-->
             <div class="row mb-6">
                 <!--begin::Label-->
+                <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Name') }}</label>
+                <!--end::Label-->
+
+                <!--begin::Col-->
+                <div class="col-lg-8">
+                    <!--begin::Row-->
+                    <div class="row">
+                        <!--begin::Col-->
+                        <div class="col-lg fv-row">
+                            <input readOnly type="text" name="name" class="form-control form-control-lg form-control-solid"
+                                placeholder="Name" value="{{ $user->name }}" />
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Row-->
+                </div>
+                <!--end::Col-->
+            </div>
+            <!--end::Input group-->
+            
+            <!--begin::Input group-->
+            <div class="row mb-6">
+                <!--begin::Label-->
                 <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Username') }}</label>
                 <!--end::Label-->
 

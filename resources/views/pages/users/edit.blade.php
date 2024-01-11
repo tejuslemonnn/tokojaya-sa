@@ -19,6 +19,30 @@
                 <!--begin::Input group-->
                 <div class="row mb-6">
                     <!--begin::Label-->
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Name') }}</label>
+                    <!--end::Label-->
+
+                    <!--begin::Col-->
+                    <div class="col-lg-8">
+                        <!--begin::Row-->
+                        <div class="row">
+                            <!--begin::Col-->
+                            <div class="col-lg fv-row">
+                                <input type="text" name="name"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Name"
+                                    value="{{ $user->name }}" />
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+                    </div>
+                    <!--end::Col-->
+                </div>
+                <!--end::Input group-->
+
+                <!--begin::Input group-->
+                <div class="row mb-6">
+                    <!--begin::Label-->
                     <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Username') }}</label>
                     <!--end::Label-->
 
@@ -31,6 +55,30 @@
                                 <input type="text" name="username"
                                     class="form-control form-control-lg form-control-solid" placeholder="username"
                                     value="{{ $user->username }}" />
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+                    </div>
+                    <!--end::Col-->
+                </div>
+                <!--end::Input group-->
+
+                <!--begin::Input group-->
+                <div class="row mb-6">
+                    <!--begin::Label-->
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Password') }}</label>
+                    <!--end::Label-->
+
+                    <!--begin::Col-->
+                    <div class="col-lg-8">
+                        <!--begin::Row-->
+                        <div class="row">
+                            <!--begin::Col-->
+                            <div class="col-lg fv-row">
+                                <input type="password" name="password"
+                                    class="form-control form-control-lg form-control-solid" placeholder="Password"
+                                    value="" />
                             </div>
                             <!--end::Col-->
                         </div>
@@ -125,7 +173,8 @@
 
             <!--begin::Actions-->
             <div class="card-footer d-flex justify-content-end py-6 px-9">
-                <a href="{{ route('users.index') }}" class="btn btn-danger me-2" id="kt_account_profile_details_submit">
+                <a href="{{ route('users.index') }}" class="btn btn-danger me-2"
+                    id="kt_account_profile_details_submit">
                     @include('partials.general._button-indicator', ['label' => __('Back')])
                 </a>
                 <button type="submit" class="btn btn-success" id="kt_account_profile_details_submit">

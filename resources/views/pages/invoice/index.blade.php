@@ -99,11 +99,11 @@
         <div class="info">
             <div class="kasir">
                 <p style="padding-right: 10px;font-weight: bold">Nama Kasir:</p>
-                <p style="font-weight: 600;">{{ $laporan->kasir->username }}</p>
+                <p style="font-weight: 600;">{{ $laporan->kasir->name }}</p>
             </div>
             <div class="tanggal">
                 <p style="padding-right: 10px;font-weight: bold">Tanggal:</p>
-                <p style="font-weight: 600;"> {{ $laporan->created_at->format('d-M-Y H:i') }}
+                <p style="font-weight: 600;"> {{ $laporan->created_at->format('Y-m-d H:i') }}
                 </p>
             </div>
         </div>

@@ -28,18 +28,19 @@ class UsersSeeder extends Seeder
 
         $owner->assignRole('owner');
 
-        $kasir = User::create([
-            'name'          => "Didi",
-            'username'          => "kasir",
-            'password'          => Hash::make('demo'),
-        ]);
+        for ($i = 1; $i < 6; $i++) {
+            $kasir = User::create([
+                'name'          => $faker->name,
+                'username'          => "kasir-" . $i,
+                'password'          => Hash::make('demo'),
+            ]);
 
-        $this->addDummyInfo($faker, $kasir);
-
-        $kasir->assignRole('kasir');
+            $this->addDummyInfo($faker, $kasir);
+            $kasir->assignRole('kasir');
+        }
 
         $kepalaKasir = User::create([
-            'name'          => "Dono",
+            'name'          => $faker->name,
             'username'          => "kepala-kasir",
             'password'          => Hash::make('demo'),
         ]);
@@ -54,7 +55,7 @@ class UsersSeeder extends Seeder
         $dummyInfo = [
             'phone'    => $faker->phoneNumber,
             'address'    => $faker->address,
-            'shift' => rand(0, 2),
+            'shift' => rand(1, 2),
         ];
 
         $info = new UserInfo();

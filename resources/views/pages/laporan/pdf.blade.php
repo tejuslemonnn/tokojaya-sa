@@ -57,7 +57,7 @@
 
     .custom-table th,
     .custom-table td {
-        border: 1px solid #ddd;
+        border: 1px solid #000;
         padding: 8px;
         text-align: left;
     }
@@ -89,7 +89,7 @@
 
     <div class="custom-row">
         <p class="custom-col-2" style=" font-weight: bold;">Tanggal </p>
-        <p class="custom-col">: {{ Carbon\Carbon::parse($laporan->created_at)->format('d-M-Y H:i') }} </p>
+        <p class="custom-col">: {{ Carbon\Carbon::parse($laporan->created_at)->format('Y-m-d H:i') }} </p>
     </div>
 
     <div class="custom-row">

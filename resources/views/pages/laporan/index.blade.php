@@ -42,6 +42,27 @@
                         </div>
                     </div>
 
+                    <div class="row d-flex justify-content-end">
+                        <div class="col-lg-3 col-8">
+                            <div class="me-3">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Min</span>
+                                    <input type="text" class="form-control" placeholder="Min" aria-label="Min"
+                                        aria-describedby="basic-addon1" name="min" id="min">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-8">
+                            <div class="me-3">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Max</span>
+                                    <input type="text" class="form-control" placeholder="Max" aria-label="Max"
+                                        aria-describedby="basic-addon1" name="max" id="max">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
                         <table id="laporans-table" class="table">
                             <thead>
@@ -84,7 +105,17 @@
     @push('scripts')
         <script>
             $(document).ready(function() {
-                
+
+                let minDate, maxDate;
+
+                minDate = new DateTime('#min', {
+                    format: 'YYYY-MM-DD'
+                });
+                maxDate = new DateTime('#max', {
+                    format: 'YYYY-MM-DD'
+                });
+
+
                 var laporansTable = $('#laporans-table').DataTable({
                     processing: true,
                     serverSide: true,
@@ -93,6 +124,8 @@
                         data: function(d) {
                             var shiftValue = $('#shiftFilter').val();
                             d.shift = shiftValue;
+                            d.from_date = $('#min').val();
+                            d.end_date = $('#max').val();
                         }
                     },
                     columns: [{
@@ -105,7 +138,8 @@
                         },
                         {
                             data: 'shift_kerja',
-                            name: 'shift_kerja'
+                            name: 'shift_kerja',
+                            searchable: false
                         },
                         {
                             data: 'created_at',
@@ -122,6 +156,14 @@
                         [0, 'asc']
                     ],
                 });
+
+                document.querySelectorAll('#min, #max').forEach((el) => {
+                    el.addEventListener('change', function() {
+                        console.log($('#min').val());
+                        laporansTable.draw();
+                    });
+                });
+
 
                 $('#shiftFilter').on('change', function() {
                     laporansTable.draw();
@@ -163,7 +205,7 @@
                         // },
                     ],
                 });
-                
+
             });
         </script>
     @endpush

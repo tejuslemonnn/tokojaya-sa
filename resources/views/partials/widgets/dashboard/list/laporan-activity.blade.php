@@ -28,7 +28,7 @@
                 <div class="timeline-item">
                     <!--begin::Label-->
                     <div class="timeline-label fw-bolder text-gray-800 fs-6">
-                        {{ Carbon\Carbon::parse($laporan->created_at)->format('d-M-Y H:i') }}
+                        {{ Carbon\Carbon::parse($laporan->created_at)->format('Y-m-d H:i') }}
                     </div>
                     <!--end::Label-->
 
