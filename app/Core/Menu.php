@@ -425,7 +425,7 @@ class Menu {
             } else {
                 array_unshift($breadcrumb, array(
                     'title' => 'Home',
-                    'path' => 'index',
+                    'path' => auth()->user()->hasRole('kasir') ? 'cashier' : 'index',
                     'active' => false
                 ));
             }

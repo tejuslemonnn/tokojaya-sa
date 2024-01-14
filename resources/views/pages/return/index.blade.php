@@ -14,7 +14,7 @@
             @endif
 
             @if (Session::has('error'))
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" id="error-message">
                     {{ Session::get('error') }}
                     @php
                         Session::forget('error');
@@ -33,89 +33,83 @@
                 </div>
             @endif
 
-                <!--begin::Form Kode Barang-->
-                <div class="form-group row mb-3">
-                    <label for="kode" class="col-lg-2 control-label">Kode Barang</label>
-                    <div class="col-lg-4 d-flex">
-                        <form action="{{ route('cashier.addCart') }}" method="post" class="d-flex">
-                            @csrf
-                            <input type="text" name="kode" class="form-control"
-                                style="border-top-right-radius: 0px;border-bottom-right-radius: 0px">
-                            <button type="submit" class="btn btn-sm btn-primary"
-                                style="border-top-left-radius: 0px;border-bottom-left-radius: 0px"><i
-                                    class="fa fa-arrow-right"></i></button>
-                        </form>
-                        <button class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal"
-                            data-bs-target="#productModal">List
-                            Products</button>
-                        <button class="btn btn-sm btn-dark" id="barcode" data-bs-toggle="modal"
-                            data-bs-target="#qrCodeModal">
-                            <img src="{{ asset('demo1/media/icons/duotune/ecommerce/ecm010.svg') }}" alt="Barcode"
-                                style="fill: white;">
-                        </button>
-                    </div>
+
+            <!--begin::form no penjualan-->
+            <div class="form-group row mb-3 d-flex">
+                <label for="no_struk" class="col-lg-2 control-label">No Struk</label>
+                <div class="col-lg-4 d-flex">
+                    <input type="text" name="no_struk" class="form-control"
+                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noStruk">
+                    <button type="button" class="btn btn-sm btn-primary"
+                        style="border-top-left-radius: 0px;border-bottom-left-radius: 0px" id="btnStruk"><i
+                            class="fa fa-arrow-right"></i></button>
                 </div>
-                <!--end::form Kode Barang-->
+            </div>
+            <!--end::form no penjualan-->
 
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-body border">
-                                @include('partials.widgets.master._table')
-                            </div>
-                        </div>
+            <!--begin::card-->
+            <div class="row">
+                <div class="col-md-8"><!--begin::table-->
+                    <div class="table-responsive">
+                        <table id="returnProducts-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Produk</th>
+                                    <th>Jumlah</th>
+                                    <th>Satuan</th>
+                                    <th>Sub Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <!-- DataTable Body will be loaded dynamically by JavaScript -->
+                        </table>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body border" style="padding: 1rem 1.25rem !important">
-                                <form action="{{ route('cashier.cetakStruk') }}" method="POST" id="cetakStrukForm">
-                                    @csrf
-                                    <div class="form-group row text-center mb-3">
-                                        <label for="total" class="col-3 control-label">Total</label>
-                                        <div class="col-8">
-                                            <input type="number" min="0" id="total"
-                                                class="form-control bg-secondary" readonly
-                                                value="{{ !empty($cashier) ? $cashier->total_bayar : 0 }}.00"
-                                                name="total">
-                                        </div>
+                    <!--end::table-->
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body border" style="padding: 1rem 1.25rem !important">
+                            <form action="" method="GET">
+                                @csrf
+                                <div class="form-group row text-center mb-3">
+                                    <label for="totalReturn" class="col-3 control-label">Total</label>
+                                    <div class="col-8">
+                                        <input type="number" min="0" id="totalReturn"
+                                            class="form-control bg-secondary" readonly name="totalReturn">
                                     </div>
-                                    <div class="form-group row text-center mb-3">
-                                        <label for="bayar" class="col-3 control-label">Bayar</label>
-                                        <div class="col-8">
-                                            <input type="number" min="0" id="bayar" name="bayar"
-                                                class="form-control" name="bayar" value="0">
-                                        </div>
+                                </div>
+                                <div class="form-group row text-center mb-3">
+                                    <label for="bayarReturn" class="col-3 control-label">Bayar</label>
+                                    <div class="col-8">
+                                        <input type="number" min="0" id="bayarReturn" name="bayarReturn"
+                                            class="form-control" name="bayarReturn" value="0">
                                     </div>
-                                    <div class="form-group row text-center mb-3">
-                                        <label for="kembali" class="col-3 control-label">Kembali</label>
-                                        <div class="col-8">
-                                            <input type="number" min="0" id="kembali"
-                                                class="form-control bg-secondary" value="{{ old('kembali') ?? 0 }}"
-                                                readonly name="kembali">
-                                        </div>
+                                </div>
+                                <div class="form-group row text-center mb-3">
+                                    <label for="kembaliReturn" class="col-3 control-label">Kembali</label>
+                                    <div class="col-8">
+                                        <input type="number" min="0" id="kembaliReturn"
+                                            class="form-control bg-secondary" readonly name="kembaliReturn">
                                     </div>
+                                </div>
 
-                                    <div class="d-flex justify-content-end">
-                                        <button data-bs-toggle="modal" data-bs-target="#batalPesananModal"
-                                            type="button"
-                                            class="btn btn-sm me-2  {{ empty($cashier) ? 'btn-secondary' : 'btn-danger' }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
-                                            title="{{ empty($cashier) ? 'Produk belum ada!' : 'Batalkan Pesanan' }}">Batal
-                                            Pesanan</button>
+                                <div class="d-flex justify-content-end">
+                                    <button data-bs-toggle="modal" data-bs-target="#batalPesananModal" type="button"
+                                        class="btn btn-sm me-2 btn-danger" data-bs-toggle="tooltip"
+                                        data-bs-placement="left" data-bs-trigger="hover" title="Batal Return">Batal
+                                        Return</button>
 
-                                        <button type="button"
-                                            class="btn btn-sm {{ empty($cashier) ? 'btn-secondary' : 'btn-success' }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
-                                            title="{{ empty($cashier) ? 'Produk belum ada!' : 'Cetak Struk' }}"
-                                            id="{{ empty($cashier) ? '' : 'cetakStrukButton' }}">Cetak
-                                            Struk</button>
+                                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="tooltip"
+                                        data-bs-placement="left" data-bs-trigger="hover">Return
+                                        Pesanan</button>
 
-                                    </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
+            </div>
+            <!--end::card-->
 
         </div>
         <!--end::Card body-->
@@ -123,8 +117,7 @@
     <!--end::Card-->
 
     <!-- Modal Products-->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -178,25 +171,8 @@
         </div>
     </div>
 
-    <!-- Modal QR Code-->
-    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="reader" width="600px"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal Batal Pesanan-->
-    <div class="modal fade" id="batalPesananModal" tabindex="-1" aria-labelledby="batalPesananModalLabel"
+    {{-- <div class="modal fade" id="batalPesananModal" tabindex="-1" aria-labelledby="batalPesananModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -221,35 +197,32 @@
                 </form>
             </div>
         </div>
+    </div> --}}
+
+    <!-- Modal returnProduct-->
+    <div class="modal fade" id="returnProductModal" tabindex="-1" aria-labelledby="returnProductModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="returnProductModalLabel">Return Pesanan</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('returnProduct') }}" method="post">
+                  @csrf
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Return</button>
+                </div>
+              </form>
+            </div>
+        </div>
     </div>
 
     @push('scripts')
         <script>
-            @if (session()->has('strukUrl'))
-                window.open("{{ session('strukUrl') }}", "_blank");
-            @endif
-
-            function onScanSuccess(decodedText, decodedResult) {
-                console.log(`Code matched = ${decodedText}`, decodedResult);
-            }
-
-            let config = {
-                fps: 10,
-                qrbox: {
-                    width: 100,
-                    height: 100
-                },
-                rememberLastUsedCamera: true,
-                supportedScanTypes: [
-                    Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                    Html5QrcodeScanType.SCAN_TYPE_FILE
-                ]
-            };
-
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", config, false);
-            html5QrcodeScanner.render(onScanSuccess);
-
             $(document).ready(function() {
                 /* begin::cashier */
                 $('#kembali').val({!! !empty($cashier) ? 0 - $cashier->total_bayar : 0 !!});
@@ -334,20 +307,87 @@
 
                 /* begin::return */
 
-                $('#returnProducts-table').DataTable({})
+                if ($('#noStruk').val() != '') {
+                    returnDatatable();
+                } else {
+                    $('#returnProducts-table').DataTable({})
+                }
+
 
                 $('#btnStruk').click(function(e) {
-                    var noStruk = $('#noStruk').val();
+                    e.preventDefault();
+                    returnDatatable();
+                });
 
+                $(document).on('click', '.return-modal-trigger', function() {
+                    var laporanProductId = $(this).data('laporan-product-id');
+                    var productId = $(this).data('product-id');
+                    var productSatuan = $(this).data('satuan');
+                    var satuans = {!! $satuans !!};
+
+                    var products = @json($products);
+
+                    var product = products.find(item => item.id === productId);
+
+                    if (product) {
+                        var modalBody = $('#returnProductModal .modal-body');
+                        modalBody.html(
+                            `<input type="hidden" name="laporan_product_id" value="${laporanProductId}">` +
+                            `<div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon2">Produk</span>
+                                    <input type="text" class="form-control"
+                                        value="${product.nama_produk}" disabled>
+                              </div>
+                          ` +
+                            `
+                          <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon2">Jumlah</span>
+                                    <input type="number" class="form-control" name="jumlah">
+                          </div>
+                          ` +
+                            `
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon2">Satuan</span>
+                                <select class="form-select" aria-label="Satuan" name="satuan">
+                                ${satuans.map(satuan => `
+                                <option value="${satuan.nama}" ${productSatuan == satuan.nama ? 'selected' : ''}>
+                                ${satuan.nama}
+                                </option>
+                              `).join('')}
+                                </select>
+                        </div>
+                          ` +
+                            `
+                          <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon2">Deskripsi</span>
+                                    <select class="form-select" aria-label="Deskripsi" name="deskripsi">
+                                        <option value="Barang Rusak">Barang Rusak</option>
+                                        <option value="Expired">Expired</option>
+                                    </select>
+                                </div>
+                          `
+                        );
+
+
+                        $('#returnProductModal').modal('show');
+                    } else {
+                        console.log('Product not found.');
+                    }
+                });
+
+                function returnDatatable() {
                     $.ajax({
                         type: "GET",
                         url: "{{ route('return.showReturn') }}",
                         data: {
                             _token: '{{ csrf_token() }}',
-                            noStruk: noStruk
+                            noStruk: $('#noStruk').val()
                         },
                         dataType: "json",
                         success: function(response) {
+
+                            $('#error-message').remove();
+
                             $('#totalReturn').val(response.laporan.total);
                             $('#bayarReturn').val(response.laporan.bayar);
                             $('#kembaliReturn').val(response.laporan.kembali);
@@ -385,9 +425,18 @@
                                     [0, 'asc']
                                 ],
                             });
+                        },
+                        error: function(response) {
+                            if (response.responseJSON && response.responseJSON.redirect) {
+                                // Redirect to the specified URL
+                                window.location.href = response.responseJSON.redirect;
+                            } else {
+                                // Handle other errors or redirect back
+                                window.location.href = "{{ url()->previous() }}";
+                            }
                         }
                     });
-                });
+                }
                 /* end::return */
 
             });

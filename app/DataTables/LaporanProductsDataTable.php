@@ -43,14 +43,6 @@ class LaporanProductsDataTable extends DataTable
                 return $jumlah . ' ' . $satuan;
             });
 
-        if (auth()->user()->hasPermissionTo('manage shop')) {
-            $dataTable->addColumn('action', function (LaporanProducts $item) {
-                return view('pages.laporan._action-menu-detail', [
-                    'item' => $item
-                ]);
-            });
-        }
-
         return $dataTable;
     }
 
@@ -111,14 +103,6 @@ class LaporanProductsDataTable extends DataTable
             Column::make('sub_total'),
             Column::make('return_jumlah')->title('return'),
         ];
-
-        if (auth()->user()->hasPermissionTo('manage shop')) {
-            $columns[] = Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->addClass('text-center d-flex')
-                ->responsivePriority(-1);
-        }
 
         return $columns;
     }

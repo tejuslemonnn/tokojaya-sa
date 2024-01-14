@@ -203,6 +203,35 @@ return array(
         ),
     ),
 
+    'return'         => array(
+        'title' => 'Return',
+        'assets' => array(
+            'custom' => array(
+                'css' => array(
+                    'plugins/custom/datatables/datatables.bundle.css',
+                ),
+                'js'  => array(
+                    'plugins/custom/datatables/datatables.bundle.js',
+                ),
+            ),
+        ),
+    ),
+
+    'return' => array(
+        '*'         => array(
+            'assets' => array(
+                'custom' => array(
+                    'css' => array(
+                        'plugins/custom/datatables/datatables.bundle.css',
+                    ),
+                    'js'  => array(
+                        'plugins/custom/datatables/datatables.bundle.js',
+                    ),
+                ),
+            ),
+        ),
+    ),
+
     'laporan'         => array(
         'title' => 'Laporan',
         'assets' => array(

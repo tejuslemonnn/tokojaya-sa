@@ -1,5 +1,6 @@
 <?php
 
+use App\DataTables\ReturnProductDataTable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PagesController;
@@ -95,16 +96,13 @@ Route::middleware('auth')->group(function () {
             Route::get('change-category', [CashierController::class, 'changeSatuan'])->name('cashier.changeSatuan');
         });
 
-        Route::group(['prefix' => 'return'], function () {
-            Route::get('show', [ReturnProductController::class, 'showReturn'])->name('return.showReturn');
-        });
-
-
+        Route::get('showReturn', [ReturnProductController::class, 'showReturn'])->name('return.showReturn');
+        Route::resource('return', ReturnProductController::class);
     });
 
     Route::get('invoice/{id}', [LaporanController::class, 'invoice'])->name('invoice');
     Route::get('returnProductDatatable', [LaporanController::class, 'returnProductDatatable'])->name('returnProductDatatable');
-    Route::post('returnProduct', [LaporanController::class, 'returnProduct'])->name('returnProduct');
+    Route::post('returnProduct', [ReturnProductController::class, 'returnProduct'])->name('returnProduct');
 });
 
 

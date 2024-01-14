@@ -202,6 +202,14 @@ return array(
             'permission' => ['manage sale']
         ),
 
+        //// Return
+        array(
+            'title' => 'Return',
+            'path'  => 'return',
+            'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm008.svg", "svg-icon-2"),
+            'permission' => ['manage sale']
+        ),
+
         //// Laporan
         array(
             'title' => 'Laporan',
