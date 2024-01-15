@@ -28,6 +28,15 @@ class UsersSeeder extends Seeder
 
         $owner->assignRole('owner');
 
+        $kasir = User::create([
+            'name'          => $faker->name,
+            'username'          => "kasir",
+            'password'          => Hash::make('demo'),
+        ]);
+
+        $this->addDummyInfo($faker, $kasir);
+        $kasir->assignRole('kasir');
+
         for ($i = 1; $i < 6; $i++) {
             $kasir = User::create([
                 'name'          => $faker->name,

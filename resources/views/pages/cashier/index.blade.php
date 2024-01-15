@@ -33,89 +33,88 @@
                 </div>
             @endif
 
-                <!--begin::Form Kode Barang-->
-                <div class="form-group row mb-3">
-                    <label for="kode" class="col-lg-2 control-label">Kode Barang</label>
-                    <div class="col-lg-4 d-flex">
-                        <form action="{{ route('cashier.addCart') }}" method="post" class="d-flex">
-                            @csrf
-                            <input type="text" name="kode" class="form-control"
-                                style="border-top-right-radius: 0px;border-bottom-right-radius: 0px">
-                            <button type="submit" class="btn btn-sm btn-primary"
-                                style="border-top-left-radius: 0px;border-bottom-left-radius: 0px"><i
-                                    class="fa fa-arrow-right"></i></button>
-                        </form>
-                        <button class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal"
-                            data-bs-target="#productModal">List
-                            Products</button>
-                        <button class="btn btn-sm btn-dark" id="barcode" data-bs-toggle="modal"
-                            data-bs-target="#qrCodeModal">
-                            <img src="{{ asset('demo1/media/icons/duotune/ecommerce/ecm010.svg') }}" alt="Barcode"
-                                style="fill: white;">
-                        </button>
-                    </div>
+            <!--begin::Form Kode Barang-->
+            <div class="form-group row mb-3">
+                <label for="kode" class="col-lg-2 control-label">Kode Barang</label>
+                <div class="col-lg-4 d-flex">
+                    <form action="{{ route('cashier.addCart') }}" method="post" class="d-flex">
+                        @csrf
+                        <input type="text" name="kode" class="form-control"
+                            style="border-top-right-radius: 0px;border-bottom-right-radius: 0px">
+                        <button type="submit" class="btn btn-sm btn-primary"
+                            style="border-top-left-radius: 0px;border-bottom-left-radius: 0px"><i
+                                class="fa fa-arrow-right"></i></button>
+                    </form>
+                    <button class="btn btn-sm btn-primary mx-2" data-bs-toggle="modal"
+                        data-bs-target="#productModal">List
+                        Products</button>
+                    <button class="btn btn-sm btn-dark" id="barcode" data-bs-toggle="modal"
+                        data-bs-target="#qrCodeModal">
+                        <img src="{{ asset('demo1/media/icons/duotune/ecommerce/ecm010.svg') }}" alt="Barcode"
+                            style="fill: white;">
+                    </button>
                 </div>
-                <!--end::form Kode Barang-->
+            </div>
+            <!--end::form Kode Barang-->
 
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-body border">
-                                @include('partials.widgets.master._table')
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body border" style="padding: 1rem 1.25rem !important">
-                                <form action="{{ route('cashier.cetakStruk') }}" method="POST" id="cetakStrukForm">
-                                    @csrf
-                                    <div class="form-group row text-center mb-3">
-                                        <label for="total" class="col-3 control-label">Total</label>
-                                        <div class="col-8">
-                                            <input type="number" min="0" id="total"
-                                                class="form-control bg-secondary" readonly
-                                                value="{{ !empty($cashier) ? $cashier->total_bayar : 0 }}.00"
-                                                name="total">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row text-center mb-3">
-                                        <label for="bayar" class="col-3 control-label">Bayar</label>
-                                        <div class="col-8">
-                                            <input type="number" min="0" id="bayar" name="bayar"
-                                                class="form-control" name="bayar" value="0">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row text-center mb-3">
-                                        <label for="kembali" class="col-3 control-label">Kembali</label>
-                                        <div class="col-8">
-                                            <input type="number" min="0" id="kembali"
-                                                class="form-control bg-secondary" value="{{ old('kembali') ?? 0 }}"
-                                                readonly name="kembali">
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-end">
-                                        <button data-bs-toggle="modal" data-bs-target="#batalPesananModal"
-                                            type="button"
-                                            class="btn btn-sm me-2  {{ empty($cashier) ? 'btn-secondary' : 'btn-danger' }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
-                                            title="{{ empty($cashier) ? 'Produk belum ada!' : 'Batalkan Pesanan' }}">Batal
-                                            Pesanan</button>
-
-                                        <button type="button"
-                                            class="btn btn-sm {{ empty($cashier) ? 'btn-secondary' : 'btn-success' }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
-                                            title="{{ empty($cashier) ? 'Produk belum ada!' : 'Cetak Struk' }}"
-                                            id="{{ empty($cashier) ? '' : 'cetakStrukButton' }}">Cetak
-                                            Struk</button>
-
-                                    </div>
-                                </form>
-                            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body border">
+                            @include('partials.widgets.master._table')
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body border" style="padding: 1rem 1.25rem !important">
+                            <form action="{{ route('cashier.cetakStruk') }}" method="POST" id="cetakStrukForm">
+                                @csrf
+                                <div class="form-group row text-center mb-3">
+                                    <label for="total" class="col-3 control-label">Total</label>
+                                    <div class="col-8">
+                                        <input type="number" min="0" id="total"
+                                            class="form-control bg-secondary" readonly
+                                            value="{{ !empty($cashier) ? $cashier->total_bayar : 0 }}.00"
+                                            name="total">
+                                    </div>
+                                </div>
+                                <div class="form-group row text-center mb-3">
+                                    <label for="bayar" class="col-3 control-label">Bayar</label>
+                                    <div class="col-8">
+                                        <input type="number" min="0" id="bayar" name="bayar"
+                                            class="form-control" name="bayar" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row text-center mb-3">
+                                    <label for="kembali" class="col-3 control-label">Kembali</label>
+                                    <div class="col-8">
+                                        <input type="number" min="0" id="kembali"
+                                            class="form-control bg-secondary" value="{{ old('kembali') ?? 0 }}" readonly
+                                            name="kembali">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end">
+                                    <button data-bs-toggle="modal" data-bs-target="#batalPesananModal" type="button"
+                                        class="btn btn-sm me-2  {{ empty($cashier) ? 'btn-secondary' : 'btn-danger' }}"
+                                        data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
+                                        title="{{ empty($cashier) ? 'Produk belum ada!' : 'Batalkan Pesanan' }}">Batal
+                                        Pesanan</button>
+
+                                    <button type="button"
+                                        class="btn btn-sm {{ empty($cashier) ? 'btn-secondary' : 'btn-success' }}"
+                                        data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover"
+                                        title="{{ empty($cashier) ? 'Produk belum ada!' : 'Cetak Struk' }}"
+                                        id="{{ empty($cashier) ? '' : 'cetakStrukButton' }}">Cetak
+                                        Struk</button>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
         <!--end::Card body-->
@@ -123,8 +122,7 @@
     <!--end::Card-->
 
     <!-- Modal Products-->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -298,7 +296,7 @@
                     }
                 });
 
-                $(document).on('input', '.quantity', debounce(function() {
+                $(document).on('keyup', '.quantity', function() {
                     let $row = $(this).closest('tr');
                     let itemId = $(this).data('item-id');
                     let newValue = parseInt($(this).val());
@@ -323,73 +321,15 @@
                             addOrUpdate(itemId, 1, satuan);
                         }
                     }
-                }, 500));
+                });
 
-                $('#bayar').change(function(e) {
+                $('#bayar').keyup(function(e) {
                     var changedValue = $(this).val();
                     var total = $('#total').val();
                     $('#kembali').val(changedValue - total);
                 });
+                
                 /* end::cashier */
-
-                /* begin::return */
-
-                $('#returnProducts-table').DataTable({})
-
-                $('#btnStruk').click(function(e) {
-                    var noStruk = $('#noStruk').val();
-
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('return.showReturn') }}",
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            noStruk: noStruk
-                        },
-                        dataType: "json",
-                        success: function(response) {
-                            $('#totalReturn').val(response.laporan.total);
-                            $('#bayarReturn').val(response.laporan.bayar);
-                            $('#kembaliReturn').val(response.laporan.kembali);
-
-                            $('#returnProducts-table').DataTable().destroy();
-
-                            $('#returnProducts-table').DataTable({
-                                processing: true,
-                                data: response.datatable.original.
-                                data,
-                                columns: [{
-                                        data: 'nama_produk',
-                                        name: 'nama_produk'
-                                    },
-                                    {
-                                        data: 'jumlah',
-                                        name: 'jumlah'
-                                    },
-                                    {
-                                        data: 'satuan',
-                                        name: 'satuan'
-                                    },
-                                    {
-                                        data: 'sub_total',
-                                        name: 'sub_total'
-                                    },
-                                    {
-                                        data: 'action',
-                                        name: 'action',
-                                        orderable: false,
-                                        searchable: false
-                                    },
-                                ],
-                                order: [
-                                    [0, 'asc']
-                                ],
-                            });
-                        }
-                    });
-                });
-                /* end::return */
-
             });
 
             function debounce(func, delay) {

@@ -64,7 +64,6 @@
                         url: '{{ route('users.table') }}',
                         data: function(d) {
                             var shiftValue = $('#shiftFilter').val();
-                            console.log('Shift Value:', shiftValue);
                             d.shift = shiftValue;
                         }
                     },
