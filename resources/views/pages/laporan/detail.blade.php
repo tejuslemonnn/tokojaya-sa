@@ -42,7 +42,7 @@
                         Struk
                     </a>
 
-                    <a href="{{ route('laporan.pdf', $laporan->no_laporan) }}" class="btn btn-sm btn-danger mx-2">
+                    <a href="{{ route('laporan.pdfDetail', $laporan->no_laporan) }}" class="btn btn-sm btn-danger mx-2">
                         PDF
                     </a>
                 </div>

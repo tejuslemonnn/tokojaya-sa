@@ -53,7 +53,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::resource('laporan', LaporanController::class);
         Route::get('/laporan-table', [LaporanController::class, 'laporansTable'])->name('laporan.table');
-        Route::get('pdf/${no_laporan}', [LaporanController::class, 'pdf'])->name('laporan.pdf');
+        Route::get('pdf/${no_laporan}', [LaporanController::class, 'pdfDetail'])->name('laporan.pdfDetail');
+        Route::get('pdf-all/{shift?}/{from_date?}/{end_date?}', [LaporanController::class, 'pdf'])->name('laporan.pdf');
         Route::resource('categories', CategoriesController::class);
         Route::resource('satuans', SatuanController::class);
     });

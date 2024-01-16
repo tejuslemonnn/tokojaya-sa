@@ -31,6 +31,9 @@ class LaporanDataTable extends DataTable
             ->editColumn('shift_kerja', function (Laporan $model) {
                 return $model->kasir->info->shift;
             })
+            ->editColumn('total', function (Laporan $model) {
+                return "Rp." . convertRupiah($model->total);
+            })
             ->editColumn('created_at', function (Laporan $model) {
                 return Carbon::parse($model->created_at)->format('d-M-Y H:i');
             })
@@ -99,6 +102,7 @@ class LaporanDataTable extends DataTable
             Column::make('no_laporan'),
             Column::make('user_id')->title('Kasir'),
             Column::make('shift_kerja'),
+            Column::make('total'),
             Column::make('created_at')->title('Tanggal'),
             Column::computed('action')
                 ->exportable(false)

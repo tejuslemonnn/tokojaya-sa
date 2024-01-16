@@ -15,6 +15,7 @@ use App\DataTables\LaporanProductsDataTable;
 use App\Models\LaporanProducts;
 use App\Models\Product;
 use Carbon\Carbon;
+use DB;
 
 class LaporanController extends Controller
 {
@@ -23,7 +24,8 @@ class LaporanController extends Controller
         return view('pages.laporan.index');
     }
 
-    public function laporansTable(LaporanDataTable $dataTable, Request $request){
+    public function laporansTable(LaporanDataTable $dataTable, Request $request)
+    {
         $shift = $request->input('shift');
 
 
@@ -96,11 +98,41 @@ class LaporanController extends Controller
         return view('pages.invoice.index', ['laporan' => $laporan]);
     }
 
-    public function pdf($no_lapran){
-        $laporan = Laporan::where('no_laporan', $no_lapran)->first();
-        
+    public function pdf($shift, $fromDate, $endDate)
+    {
+        $shift = ($shift == 'semua') ? null : $shift;
+
+        $laporans = DB::table('laporans')
+            ->leftJoin('users', 'laporans.user_id', '=', 'users.id')
+            ->leftJoin('user_infos', 'laporans.user_id', '=', 'user_infos.user_id')
+            ->select(
+                'laporans.*',
+                'user_infos.shift as shift_kerja',
+                'users.name as kasir_name',
+            )
+            ->when(intval($shift), function ($query, $shift) {
+                return $query->where('user_infos.shift', $shift);
+            })
+            ->when($fromDate, function ($query, $fromDate) {
+                return $query->whereDate('laporans.created_at', '>=', Carbon::parse($fromDate)->format('Y-m-d H:i:s'));
+            })
+            ->when($endDate, function ($query, $endDate) {
+                return $query->whereDate('laporans.created_at', '<=', Carbon::parse($endDate)->format('Y-m-d H:i:s'));
+            })
+            ->get();
 
         $pdf = Pdf::loadView('pages.laporan.pdf', [
+            'laporans' => $laporans
+        ])->setPaper('a4', 'potrait');
+        return $pdf->download('Laporans_' . Carbon::now() . '.pdf');
+    }
+
+    public function pdfDetail($no_lapran)
+    {
+        $laporan = Laporan::where('no_laporan', $no_lapran)->first();
+
+
+        $pdf = Pdf::loadView('pages.laporan.pdfDetail', [
             'laporan' => $laporan
         ])->setPaper('a4', 'potrait');
         return $pdf->download('Laporan_' . $laporan->no_laporan . '.pdf');

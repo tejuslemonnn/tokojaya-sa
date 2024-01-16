@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan PDF</title>
+    <title>Laporan {{ $laporan->no_laporan }}</title>
 </head>
 <style>
     .d-flex {
@@ -76,28 +76,52 @@
 </style>
 
 <body>
+
     <div class="custom-row">
-        <p class="custom-col-2" style=" font-weight: bold;">Total Laporan </p>
-        <p class="custom-col">: {{ count($laporans) }} Penjualan</p>
+        <p class="custom-col-2" style=" font-weight: bold;">No Laporan </p>
+        <p class="custom-col">: {{ $laporan->no_laporan }} </p>
+    </div>
+
+    <div class="custom-row">
+        <p class="custom-col-2" style=" font-weight: bold;">Kasir </p>
+        <p class="custom-col">: {{ $laporan->kasir->name }} </p>
+    </div>
+
+    <div class="custom-row">
+        <p class="custom-col-2" style=" font-weight: bold;">Tanggal </p>
+        <p class="custom-col">: {{ Carbon\Carbon::parse($laporan->created_at)->format('Y-m-d H:i') }} </p>
+    </div>
+
+    <div class="custom-row">
+        <p class="custom-col-2" style=" font-weight: bold;">Total </p>
+        <p class="custom-col">: Rp.{{ convertRupiah($laporan->total) }} </p>
+    </div>
+
+    <div class="custom-row">
+        <p class="custom-col-2" style=" font-weight: bold;">Bayar </p>
+        <p class="custom-col">: Rp.{{ convertRupiah($laporan->bayar) }} </p>
+    </div>
+
+    <div class="custom-row">
+        <p class="custom-col-2" style=" font-weight: bold;">Kembalian </p>
+        <p class="custom-col">: Rp.{{ convertRupiah($laporan->kembali) }} </p>
     </div>
 
     <table class="custom-table">
         <tr>
             <th>#</th>
-            <th>No Laporan</th>
-            <th>Kasir</th>
-            <th>Shift Kerja</th>
-            <th>Total Pendapatan</th>
-            <th>Created At</th>
+            <th>Nama Produk</th>
+            <th>Jumlah</th>
+            <th>Satuan</th>
+            <th>Sub Total</th>
         </tr>
-        @foreach ($laporans as $index => $laporan)
+        @foreach ($laporan->laporan_products as $index => $product)
             <tr>
                 <td style="font-weight: bold">{{ $index + 1 }}</td>
-                <td>{{ $laporan->no_laporan }}</td>
-                <td>{{ $laporan->kasir_name }}</td>
-                <td>{{ $laporan->shift_kerja }}</td>
-                <td>Rp.{{ convertRupiah($laporan->total) }}</td>
-                <td>{{ $laporan->created_at }}</td>
+                <td>{{ $product->product->nama_produk }}</td>
+                <td>{{ $product->jumlah }}</td>
+                <td>{{ $product->satuan }}</td>
+                <td>Rp.{{ convertRupiah($product->sub_total) }}</td>
             </tr>
         @endforeach
     </table>

@@ -28,78 +28,85 @@
 
             <div class="tab-content" id="nav-tabContent">
 
-                <div class="tab-pane fade show active" id="nav-penjualan" role="tabpanel"
-                    aria-labelledby="nav-penjualan-tab" tabindex="0">
-                    <div class="row d-flex justify-content-end">
-                        <div class="col-4 col-sm-2">
-                            <div class="me-3">
-                                <select id="shiftFilter" class="form-select" name="shift">
-                                    <option value="" selected>All Shifts</option>
-                                    <option value="1">Shift Pagi</option>
-                                    <option value="2">Shift Malam</option>
-                                </select>
+                <div class="row d-flex justify-content-end align-items-center">
+                    <div class="col-lg-1 col-3 d-flex justify-content-end">
+                        <div class="me-3">
+                            <button class="btn btn-sm btn-danger" id="pdf">
+                                PDF
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row d-flex justify-content-end mt-4">
+
+                    <div class="col-lg-3 col-6">
+                        <div class="me-3">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Min</span>
+                                <input type="text" class="form-control" placeholder="Min" aria-label="Min"
+                                    aria-describedby="basic-addon1" name="min" id="min">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="me-3">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Max</span>
+                                <input type="text" class="form-control" placeholder="Max" aria-label="Max"
+                                    aria-describedby="basic-addon1" name="max" id="max">
                             </div>
                         </div>
                     </div>
 
-                    <div class="row d-flex justify-content-end">
-                        <div class="col-lg-3 col-8">
-                            <div class="me-3">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">Min</span>
-                                    <input type="text" class="form-control" placeholder="Min" aria-label="Min"
-                                        aria-describedby="basic-addon1" name="min" id="min">
-                                </div>
-                            </div>
+                    <div class="col-lg-2 col-6">
+                        <div class="me-3">
+                            <select id="shiftFilter" class="form-select" name="shift">
+                                <option value="" selected>All Shifts</option>
+                                <option value="1">Shift Pagi</option>
+                                <option value="2">Shift Malam</option>
+                            </select>
                         </div>
-                        <div class="col-lg-3 col-8">
-                            <div class="me-3">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon1">Max</span>
-                                    <input type="text" class="form-control" placeholder="Max" aria-label="Max"
-                                        aria-describedby="basic-addon1" name="max" id="max">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table id="laporans-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th>No Laporan</th>
-                                    <th>Kasir</th>
-                                    <th>Shift Kerja</th>
-                                    <th>created_at</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <!-- DataTable Body will be loaded dynamically by JavaScript -->
-                        </table>
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab"
-                    tabindex="0">
-                    <table id="returnProductTable"
-                        class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" style="width:100%">
+                <div class="table-responsive">
+                    <table id="laporans-table" class="table">
                         <thead>
                             <tr>
                                 <th>No Laporan</th>
-                                <th>Nama Produk</th>
-                                <th>Jumlah</th>
-                                <th>Satuan</th>
-                                <th>Deskripsi</th>
-                                <th>Tanggal</th>
+                                <th>Kasir</th>
+                                <th>Shift Kerja</th>
+                                <th>Total Pendapatan</th>
+                                <th>created_at</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
+                        <!-- DataTable Body will be loaded dynamically by JavaScript -->
                     </table>
                 </div>
-
             </div>
+
+            <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab" tabindex="0">
+                <table id="returnProductTable" class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                    style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No Laporan</th>
+                            <th>Nama Produk</th>
+                            <th>Jumlah</th>
+                            <th>Satuan</th>
+                            <th>Deskripsi</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
         </div>
-        <!--end::Card body-->
     </div>
+    <!--end::Card body-->
     <!--end::Card-->
 
     @push('scripts')
@@ -140,6 +147,10 @@
                             data: 'shift_kerja',
                             name: 'shift_kerja',
                             searchable: false
+                        },
+                        {
+                            data: 'total',
+                            name: 'total',
                         },
                         {
                             data: 'created_at',
@@ -206,6 +217,20 @@
                     ],
                 });
 
+                $('#pdf').on('click', function(e) {
+                    e.preventDefault();
+                    var selectedShift = $('#shiftFilter').val() == "" ? "semua" : $('#shiftFilter').val();
+                    var minDateValue = $('#min').val();
+                    var maxDateValue = $('#max').val();
+
+                    var pdfRoute =
+                        '{{ route('laporan.pdf', ['shift' => '', 'from_date' => '', 'end_date' => '']) }}' +
+                        '/' + encodeURIComponent(selectedShift) +
+                        '/' + encodeURIComponent(minDateValue) +
+                        '/' + encodeURIComponent(maxDateValue);
+
+                    window.location.href = pdfRoute;
+                });
             });
         </script>
     @endpush
