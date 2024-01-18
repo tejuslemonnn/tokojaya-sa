@@ -23,9 +23,6 @@ class ReturnProductDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->editColumn('no_laporan', function (ReturnProduct $model) {
-                return $model->laporan->no_laporan;
-            })
             ->editColumn('nama_produk', function (ReturnProduct $model) {
                 return $model->product->nama_produk;
             })
@@ -34,9 +31,6 @@ class ReturnProductDataTable extends DataTable
             })
             ->editColumn('satuan', function (ReturnProduct $model) {
                 return $model->satuan;
-            })
-            ->editColumn('deskripsi', function (ReturnProduct $model) {
-                return $model->deskripsi;
             })
             ->addColumn('action', 'returnproduct.action');
     }
@@ -49,7 +43,12 @@ class ReturnProductDataTable extends DataTable
      */
     public function query(ReturnProduct $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()
+                ->leftJoin('products', 'return_products.id' , '=' , 'products_id')
+                ->select([
+                    'return_products.*',
+                    'products.nama_produk as nama_produk'
+                ]);
     }
 
     /**
@@ -79,11 +78,9 @@ class ReturnProductDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            // Column::make('no_laporan'),
-            // Column::make('nama_produk'),
+            Column::make('nama_produk'),
             Column::make('jumlah'),
             Column::make('satuan'),
-            Column::make('deskripsi'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

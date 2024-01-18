@@ -8,9 +8,11 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ReturnProduct;
 use App\Models\LaporanProducts;
+use App\Models\ReturnPenjualan;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
-use App\DataTables\LaporanProductsDataTable;
+use App\DataTables\ReturnProductDataTable;
 
 class ReturnProductController extends Controller
 {
@@ -19,6 +21,17 @@ class ReturnProductController extends Controller
         $products = Product::all();
         $satuans = Satuan::all();
         return view('pages.return.index', compact('products', 'satuans'));
+    }
+
+    public function show($noReturn, ReturnProductDataTable $datatable)
+    {
+        $laporan = Laporan::where('no_laporan', $noReturn)->first();
+        $satuans = Satuan::all();
+
+        return $datatable->render('pages.laporan.detail', [
+            'laporan' => $laporan,
+            'satuans' => $satuans
+        ]);
     }
 
     public function showReturn(Request $request)
@@ -32,12 +45,10 @@ class ReturnProductController extends Controller
         }
 
         $datatable = DataTables::eloquent(LaporanProducts::query()->join('products', 'laporan_products.product_id', '=', 'products.id')
-            ->leftJoin('return_products', 'laporan_products.id', '=', 'return_products.laporan_product_id')
             ->where('laporan_products.laporan_id', $laporan->id)
             ->select([
                 'laporan_products.*',
                 'products.nama_produk',
-                'return_products.jumlah as return_jumlah, return_products.satuan as return_satuan',
             ]))
             ->editColumn('nama_produk', function (LaporanProducts $item) {
                 return $item->product->nama_produk;
@@ -51,10 +62,12 @@ class ReturnProductController extends Controller
             ->editColumn('sub_total', function (LaporanProducts $item) {
                 return 'Rp.' . convertRupiah($item->sub_total);
             })
-            ->editColumn('action', function (LaporanProducts $item) {
-                return '<button class="btn btn-sm btn-success return-modal-trigger" data-bs-toggle="modal"
-                data-bs-target="#returnProductModal" data-satuan="' . $item->satuan . '" data-product-id="' . $item->product_id . '" data-laporan-product-id="' . $item->id . '">Return</button>';
+            ->editColumn('qty', function (LaporanProducts $item) {
+                return '<input type="number" name="jumlah[]" class="form-control input-sm quantity" data-item-id="' . $item->id . '" data-kategori="' . $item->product->kategori_id . '" data-harga="' . $item->product->harga . '" value="' . 0 . '" min="0" max="' . $item->jumlah . '" size="3">'
+                    . '<input type="hidden" name="product_id[]" value="' . $item->product_id  . '">'
+                    . '<input type="hidden" name="satuan[]" value="' . $item->satuan  . '">';
             })
+            ->rawColumns(['qty'])
             ->toJson();
 
         return response()->json([
@@ -65,34 +78,50 @@ class ReturnProductController extends Controller
 
     public function returnProduct(Request $request)
     {
-        $req = $request->validate([
-            'laporan_product_id' => ['required'],
-            'jumlah' => ['required'],
-            'satuan' => ['required'],
-            'deskripsi' => ['required'],
+        $request->validate([
+            'no_laporan' => ['required'],
+            'jumlah.*' => ['required'],
+            'product_id.*' => ['required'],
         ]);
 
+        $laporan = Laporan::with('laporan_products')->where('no_laporan', $request->no_laporan)->first();
 
-        $laporanProducts = LaporanProducts::find($req['laporan_product_id']);
-        $product = Product::find($laporanProducts->product_id);
-        $return = ReturnProduct::where('laporan_product_id', $req['laporan_product_id'])->first();
+        $currentDate = now();
+        $datePart = $currentDate->format('Ymd');
+        $latestReturn = ReturnPenjualan::latest('no_return')->first();
+        $numericPart = $latestReturn ? intval(substr($latestReturn->no_return, -2)) + 1 : 1;
+        $numericPartPadded = str_pad($numericPart, 2, '0', STR_PAD_LEFT);
+        $newReturnNo = $datePart . $numericPartPadded;
 
-        $req['laporan_id'] = $laporanProducts->laporan_id;
-        $req['product_id'] = $laporanProducts->product_id;
-
-        $product->update([
-            'stok' => $product->stok - convertUnit($product->satuan->nama, $req['satuan'], $req['jumlah'])
+        $returnPenjualan = ReturnPenjualan::create([
+            'no_return' => "return-" . $newReturnNo,
+            'laporan_id' => $laporan->id,
+            'user_id' => auth()->user()->id,
         ]);
 
-        if (!empty($return)) {
-            $return->update([
-                'jumlah' => $return->jumlah +  convertUnit($return->satuan, $req['satuan'], $req['jumlah'])
+        foreach ($request->product_id as $key => $product_id) {
+            $product = Product::find($product_id);
+            ReturnProduct::create([
+                'return_penjualan_id' => $returnPenjualan->id,
+                'product_id' => $product_id,
+                'jumlah' => $request->jumlah[$key],
+                'satuan' => $request->satuan[$key],
             ]);
-        } else {
-            ReturnProduct::create($req);
+
+            $product->update([
+                'stok' => $product->stok - convertUnit($product->satuan->nama, $laporan->laporan_products[$key]->satuan, $request->jumlah[$key]),
+            ]);
         }
 
+        Session::flash('strukUrl', route('invoiceReturn', $returnPenjualan->no_return));
 
-        return redirect()->back()->with('success', 'Berhasil return produk!');
+        return redirect()->back()->with('success', 'Return Berhasil!');
+    }
+
+    public function invoice($invoiceReturn)
+    {
+        $return = ReturnPenjualan::with('returnProducts')->where('no_return', $invoiceReturn)->first();
+
+        return view('pages.invoice.invoice_return', ['return' => $return]);
     }
 }

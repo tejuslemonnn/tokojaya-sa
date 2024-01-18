@@ -15,15 +15,12 @@ class CreateReturnProductsTable extends Migration
     {
         Schema::create('return_products', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('laporan_id');
-            $table->foreign('laporan_id')->references('id')->on('laporans')->onUpdate('cascade')->onDelete('cascade');
-            $table->unsignedBigInteger('laporan_product_id');
-            $table->foreign('laporan_product_id')->references('id')->on('laporan_products')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('return_penjualan_id');
+            $table->foreign('return_penjualan_id')->references('id')->on('return_penjualans')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
             $table->float('jumlah');
             $table->string('satuan');
-            $table->string('deskripsi');
             $table->timestamps();
         });
     }

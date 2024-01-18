@@ -28,82 +28,80 @@
 
             <div class="tab-content" id="nav-tabContent">
 
-                <div class="row d-flex justify-content-end align-items-center">
-                    <div class="col-lg-1 col-3 d-flex justify-content-end">
-                        <div class="me-3">
-                            <button class="btn btn-sm btn-danger" id="pdf">
-                                PDF
-                            </button>
+                <div class="tab-pane fade active show" id="nav-penjualan" role="tabpanel" aria-labelledby="nav-penjualan-tab">
+                    <div class="row d-flex justify-content-end align-items-center">
+                        <div class="col-lg-1 col-3 d-flex justify-content-end">
+                            <div class="me-3">
+                                <button class="btn btn-sm btn-danger" id="pdf">
+                                    PDF
+                                </button>
+                            </div>
                         </div>
+
                     </div>
 
-                </div>
+                    <div class="row d-flex justify-content-end mt-4">
 
-                <div class="row d-flex justify-content-end mt-4">
+                        <div class="col-lg-3 col-6">
+                            <div class="me-3">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Min</span>
+                                    <input type="text" class="form-control" placeholder="Min" aria-label="Min"
+                                        aria-describedby="basic-addon1" name="min" id="min">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <div class="me-3">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">Max</span>
+                                    <input type="text" class="form-control" placeholder="Max" aria-label="Max"
+                                        aria-describedby="basic-addon1" name="max" id="max">
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="col-lg-3 col-6">
-                        <div class="me-3">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text" id="basic-addon1">Min</span>
-                                <input type="text" class="form-control" placeholder="Min" aria-label="Min"
-                                    aria-describedby="basic-addon1" name="min" id="min">
+                        <div class="col-lg-2 col-6">
+                            <div class="me-3">
+                                <select id="shiftFilter" class="form-select" name="shift">
+                                    <option value="" selected>All Shifts</option>
+                                    <option value="1">Shift Pagi</option>
+                                    <option value="2">Shift Malam</option>
+                                </select>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="me-3">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text" id="basic-addon1">Max</span>
-                                <input type="text" class="form-control" placeholder="Max" aria-label="Max"
-                                    aria-describedby="basic-addon1" name="max" id="max">
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="col-lg-2 col-6">
-                        <div class="me-3">
-                            <select id="shiftFilter" class="form-select" name="shift">
-                                <option value="" selected>All Shifts</option>
-                                <option value="1">Shift Pagi</option>
-                                <option value="2">Shift Malam</option>
-                            </select>
-                        </div>
+                    <div class="table-responsive">
+                        <table id="laporans-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>No Laporan</th>
+                                    <th>Kasir</th>
+                                    <th>Shift Kerja</th>
+                                    <th>Total Pendapatan</th>
+                                    <th>created_at</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table id="laporans-table" class="table">
+                <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab"
+                    tabindex="0">
+                    <table id="returnPenjualanTable"
+                        class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" style="width:100%">
                         <thead>
                             <tr>
+                                <th>No Return</th>
                                 <th>No Laporan</th>
-                                <th>Kasir</th>
-                                <th>Shift Kerja</th>
-                                <th>Total Pendapatan</th>
-                                <th>created_at</th>
-                                <th>Action</th>
+                                <th>Tanggal</th>
                             </tr>
                         </thead>
-                        <!-- DataTable Body will be loaded dynamically by JavaScript -->
                     </table>
                 </div>
             </div>
-
-            <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab" tabindex="0">
-                <table id="returnProductTable" class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
-                    style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>No Laporan</th>
-                            <th>Nama Produk</th>
-                            <th>Jumlah</th>
-                            <th>Satuan</th>
-                            <th>Deskripsi</th>
-                            <th>Tanggal</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-
         </div>
     </div>
     <!--end::Card body-->
@@ -180,29 +178,17 @@
                     laporansTable.draw();
                 });
 
-                var returnProductTable = $('#returnProductTable').DataTable({
+                var returnPenjualanTable = $('#returnPenjualanTable').DataTable({
                     serverSide: true,
                     processing: true,
                     ajax: '{{ route('returnProductDatatable') }}',
                     columns: [{
+                            data: 'no_return',
+                            name: 'no_return',
+                        },
+                        {
                             data: 'no_laporan',
                             name: 'no_laporan',
-                        },
-                        {
-                            data: 'nama_produk',
-                            name: 'nama_produk',
-                        },
-                        {
-                            data: 'jumlah',
-                            name: 'jumlah'
-                        },
-                        {
-                            data: 'satuan',
-                            name: 'satuan'
-                        },
-                        {
-                            data: 'deskripsi',
-                            name: 'deskripsi'
                         },
                         {
                             data: 'created_at',

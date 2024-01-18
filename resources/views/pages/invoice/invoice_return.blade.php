@@ -83,16 +83,16 @@
         <div class="flex-container-1">
             <div class="left">
                 <ul>
-                    <li>No Order</li>
+                    <li>No Return</li>
                     <li>Kasir</li>
                     <li>Tanggal</li>
                 </ul>
             </div>
             <div class="right">
                 <ul>
-                    <li> {{ $laporan->no_laporan }} </li>
-                    <li> {{ $laporan->kasir->name }} </li>
-                    <li> {{ $laporan->created_at->format('Y-m-d H:i') }} </li>
+                    <li> {{ $return->no_return }} </li>
+                    <li> {{ $return->kasir->name }} </li>
+                    <li> {{ $return->created_at->format('Y-m-d H:i') }} </li>
                 </ul>
             </div>
         </div>
@@ -100,35 +100,16 @@
         <div class="flex-container" style="margin-bottom: 10px; text-align:right;">
             <div style="text-align: left;">Nama Produk</div>
             <div>Jumlah</div>
-            <div>Total</div>
         </div>
-        @foreach ($laporan->laporan_products as $key => $item)
+        @foreach ($return->returnProducts as $key => $item)
             <div class="flex-container" style="text-align: right;">
                 <div style="text-align: left;">{{ $item->product->nama_produk }}</div>
                 <div>{{ $item->jumlah }} {{ $item->satuan }}</div>
-                <div>Rp.{{ number_format($item->sub_total, 0, ',', '.') }}</div>
             </div>
-            @if ($key != count($laporan->laporan_products) - 1)
+            @if ($key != count($return->returnProducts) - 1)
                 <hr>
             @endif
         @endforeach
-        <hr>
-        <div class="flex-container" style="text-align: right; margin-top: 10px;">
-            <div>
-                <ul>
-                    <li>Grand Total</li>
-                    <li>Pembayaran</li>
-                    <li>Kembalian</li>
-                </ul>
-            </div>
-            <div style="text-align: right;">
-                <ul>
-                    <li>Rp.{{ number_format($laporan->total, 0, ',', '.') }}</li>
-                    <li>Rp.{{ number_format($laporan->bayar, 0, ',', '.') }}</li>
-                    <li>Rp.{{ number_format($laporan->kembali, 0, ',', '.') }}</li>
-                </ul>
-            </div>
-        </div>
         <hr>
         <div class="header" style="margin-top: 50px;">
             <h3>Terimakasih</h3>

@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::get('pdf-all/{shift?}/{from_date?}/{end_date?}', [LaporanController::class, 'pdf'])->name('laporan.pdf');
         Route::resource('categories', CategoriesController::class);
         Route::resource('satuans', SatuanController::class);
+        Route::get('return/{no_laporan}', [ReturnProductController::class, 'show'])->name('return.show');
     });
 
     // Account pages
@@ -99,11 +100,12 @@ Route::middleware('auth')->group(function () {
 
         Route::get('showReturn', [ReturnProductController::class, 'showReturn'])->name('return.showReturn');
         Route::resource('return', ReturnProductController::class);
+        Route::post('returnProduct', [ReturnProductController::class, 'returnProduct'])->name('returnProduct');
     });
-
+    
+    Route::get('invoiceReturn/{no_return}', [ReturnProductController::class, 'invoice'])->name('invoiceReturn');
     Route::get('invoice/{id}', [LaporanController::class, 'invoice'])->name('invoice');
     Route::get('returnProductDatatable', [LaporanController::class, 'returnProductDatatable'])->name('returnProductDatatable');
-    Route::post('returnProduct', [ReturnProductController::class, 'returnProduct'])->name('returnProduct');
 });
 
 

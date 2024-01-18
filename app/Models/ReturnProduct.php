@@ -11,10 +11,6 @@ class ReturnProduct extends Model
 
     protected $guarded = [];
 
-    public function laporan(){
-        return $this->belongsTo(Laporan::class);
-    }
-
     public function product(){
         return $this->belongsTo(Product::class);
     }

@@ -35,12 +35,6 @@ class LaporanProductsDataTable extends DataTable
             })
             ->editColumn('sub_total', function (LaporanProducts $item) {
                 return $item->sub_total;
-            })
-            ->editColumn('return_jumlah', function (LaporanProducts $item) {
-                $jumlah = optional($item->return)->jumlah ?? '';
-                $satuan = optional($item->return)->satuan ?? '';
-
-                return $jumlah . ' ' . $satuan;
             });
 
         return $dataTable;
@@ -60,12 +54,10 @@ class LaporanProductsDataTable extends DataTable
 
         return $model->newQuery()
             ->join('products', 'laporan_products.product_id', '=', 'products.id')
-            ->leftJoin('return_products', 'laporan_products.id', '=', 'return_products.laporan_product_id')
             ->where('laporan_products.laporan_id', $laporan->id)
             ->select([
                 'laporan_products.*',
                 'products.nama_produk',
-                'return_products.jumlah as return_jumlah, return_products.satuan as return_satuan',
             ]);
     }
 
@@ -101,7 +93,6 @@ class LaporanProductsDataTable extends DataTable
             Column::make('jumlah'),
             Column::make('satuan'),
             Column::make('sub_total'),
-            Column::make('return_jumlah')->title('return'),
         ];
 
         return $columns;

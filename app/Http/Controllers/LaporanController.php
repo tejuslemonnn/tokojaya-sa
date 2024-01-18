@@ -14,6 +14,7 @@ use App\DataTables\ReturnProductDataTable;
 use App\DataTables\LaporanProductsDataTable;
 use App\Models\LaporanProducts;
 use App\Models\Product;
+use App\Models\ReturnPenjualan;
 use Carbon\Carbon;
 use DB;
 
@@ -39,32 +40,21 @@ class LaporanController extends Controller
     public function returnProductDataTable()
     {
 
-        $model = ReturnProduct::query()
-            ->join('laporans', 'return_products.laporan_id', '=', 'laporans.id')
-            ->join('products', 'return_products.product_id', '=', 'products.id')
+        $model = ReturnPenjualan::query()
+            ->join('laporans', 'return_penjualans.laporan_id', '=', 'laporans.id')
             ->select([
-                'return_products.*',
-                'laporans.no_laporan',
-                'products.nama_produk',
+                'return_penjualans.*',
+                'laporans.no_laporan as no_laporan',
             ]);
 
         return DataTables::of($model)
-            ->editColumn('no_laporan', function (ReturnProduct $model) {
+            ->editColumn('no_return', function (ReturnPenjualan $model) {
+                return $model->no_return;
+            })
+            ->editColumn('no_laporan', function (ReturnPenjualan $model) {
                 return $model->laporan->no_laporan;
             })
-            ->editColumn('nama_produk', function (ReturnProduct $model) {
-                return $model->product->nama_produk;
-            })
-            ->editColumn('jumlah', function (ReturnProduct $model) {
-                return $model->jumlah;
-            })
-            ->editColumn('satuan', function (ReturnProduct $model) {
-                return $model->satuan;
-            })
-            ->editColumn('deskripsi', function (ReturnProduct $model) {
-                return $model->deskripsi;
-            })
-            ->editColumn('created_at', function (ReturnProduct $model) {
+            ->editColumn('created_at', function (ReturnPenjualan $model) {
                 return Carbon::parse($model->created_at)->format('Y-m-d H:i');
             })
             // ->addColumn('action', 'returnproduct.action')

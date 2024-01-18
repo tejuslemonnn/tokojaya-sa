@@ -34,8 +34,8 @@
             @endif
 
             <!--begin::Form Kode Barang-->
-            <div class="form-group row mb-3">
-                <label for="kode" class="col-lg-2 control-label">Kode Barang</label>
+            <div class="form-group row mb-3 d-flex align-items-center">
+                <label for="kode" class="col-lg-2 control-label mb-1">Kode Barang</label>
                 <div class="col-lg-4 d-flex">
                     <form action="{{ route('cashier.addCart') }}" method="post" class="d-flex">
                         @csrf
@@ -120,9 +120,54 @@
         <!--end::Card body-->
     </div>
     <!--end::Card-->
+    <!--begin::Card-->
+    <div class="card mt-2">
+        <!--begin::Card body-->
+        <div class="card-body pt-6">
+            <!--begin::form no penjualan-->
+            <div class="form-group row mb-3 d-flex align-items-center">
+                <label for="no_return" class="col-lg-2 control-label">Kode Return</label>
+                <div class="col-lg-4 d-flex">
+                    <input type="text" name="no_return" class="form-control"
+                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noreturn">
+                    <button type="button" class="btn btn-sm btn-primary"
+                        style="border-top-left-radius: 0px;border-bottom-left-radius: 0px" id="btnreturn"><i
+                            class="fa fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <!--end::form no penjualan-->
+
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body border">
+                            <div class="table-responsive">
+                                @csrf
+                                <table id="returnProducts-table" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Produk</th>
+                                            <th>Jumlah</th>
+                                            <th>Satuan</th>
+                                            <th>Sub Total</th>
+                                            <th>Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--end::Card body-->
+    </div>
+    <!--end::Card-->
 
     <!-- Modal Products-->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -272,6 +317,14 @@
                         success: function(response) {
                             $(this).val(selectedValue);
                             addOrUpdate(itemId, newValue, satuan)
+                                .then(response => {
+                                    subTotal.text(
+                                        `Rp.${response.detail_cashier.sub_total.toFixed(2)}`
+                                    );
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                });
                         },
                         error: function(error) {
                             console.log('Error changing category: ' + error.responseText);
@@ -328,8 +381,22 @@
                     var total = $('#total').val();
                     $('#kembali').val(changedValue - total);
                 });
-                
+
                 /* end::cashier */
+                
+                /* begin::return */
+                if ($('#noReturn').val() != '') {
+                } else {
+                    $('#returnProducts-table').DataTable({})
+                }
+
+
+                $('#btnReturn').click(function(e) {
+                    e.preventDefault();
+                    $('#returnProducts-table').DataTable({})
+                });
+                /* end::return */
+                
             });
 
             function debounce(func, delay) {
