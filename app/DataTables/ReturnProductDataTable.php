@@ -2,7 +2,9 @@
 
 namespace App\DataTables;
 
+use App\Models\ReturnPenjualan;
 use App\Models\ReturnProduct;
+use Request;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
@@ -17,8 +19,6 @@ class ReturnProductDataTable extends DataTable
      * @param mixed $query Results from query() method.
      * @return \Yajra\DataTables\DataTableAbstract
      */
-    protected $dataTableVariable = 'datatableReturn';
-
     public function dataTable($query)
     {
         return datatables()
@@ -31,8 +31,8 @@ class ReturnProductDataTable extends DataTable
             })
             ->editColumn('satuan', function (ReturnProduct $model) {
                 return $model->satuan;
-            })
-            ->addColumn('action', 'returnproduct.action');
+            });
+            // ->addColumn('action', 'returnproduct.action');
     }
 
     /**
@@ -41,14 +41,18 @@ class ReturnProductDataTable extends DataTable
      * @param \App\Models\ReturnProduct $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(ReturnProduct $model)
+    public function query(ReturnProduct $model, Request $request)
     {
+        $noReturn = $this->no_return ?? request()->segment(2);
+        $return = ReturnPenjualan::where('no_return', $noReturn)->first();
+
         return $model->newQuery()
-                ->leftJoin('products', 'return_products.id' , '=' , 'products_id')
-                ->select([
-                    'return_products.*',
-                    'products.nama_produk as nama_produk'
-                ]);
+            ->join('products', 'return_products.product_id', '=', 'products.id')
+            ->where('return_products.return_penjualan_id', $return->id)
+            ->select([
+                'return_products.*',
+                'products.nama_produk',
+            ]);
     }
 
     /**
@@ -81,11 +85,11 @@ class ReturnProductDataTable extends DataTable
             Column::make('nama_produk'),
             Column::make('jumlah'),
             Column::make('satuan'),
-            Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->addClass('text-center d-flex')
-                ->responsivePriority(-1),
+            // Column::computed('action')
+            //     ->exportable(false)
+            //     ->printable(false)
+            //     ->addClass('text-center d-flex')
+            //     ->responsivePriority(-1),
         ];
     }
 

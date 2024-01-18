@@ -141,7 +141,7 @@
                 function returnDatatable() {
                     $.ajax({
                         type: "GET",
-                        url: "{{ route('return.showReturn') }}",
+                        url: "{{ route('return.showLaporanDatatable') }}",
                         data: {
                             _token: '{{ csrf_token() }}',
                             noStruk: $('#noStruk').val()
@@ -187,11 +187,9 @@
                         },
                         error: function(response) {
                             if (response.responseJSON && response.responseJSON.redirect) {
-                                // Redirect to the specified URL
                                 window.location.href = response.responseJSON.redirect;
                             } else {
-                                // Handle other errors or redirect back
-                                // window.location.href = "{{ url()->previous() }}";
+                                window.location.href = "{{ url()->previous() }}";
                             }
                         }
                     });

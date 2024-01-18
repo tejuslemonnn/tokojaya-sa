@@ -120,6 +120,7 @@
         <!--end::Card body-->
     </div>
     <!--end::Card-->
+
     <!--begin::Card-->
     <div class="card mt-2">
         <!--begin::Card body-->
@@ -129,9 +130,9 @@
                 <label for="no_return" class="col-lg-2 control-label">Kode Return</label>
                 <div class="col-lg-4 d-flex">
                     <input type="text" name="no_return" class="form-control"
-                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noreturn">
+                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noReturn">
                     <button type="button" class="btn btn-sm btn-primary"
-                        style="border-top-left-radius: 0px;border-bottom-left-radius: 0px" id="btnreturn"><i
+                        style="border-top-left-radius: 0px;border-bottom-left-radius: 0px" id="btnReturn"><i
                             class="fa fa-arrow-right"></i></button>
                 </div>
             </div>
@@ -149,8 +150,6 @@
                                             <th>Nama Produk</th>
                                             <th>Jumlah</th>
                                             <th>Satuan</th>
-                                            <th>Sub Total</th>
-                                            <th>Jumlah</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -386,6 +385,7 @@
                 
                 /* begin::return */
                 if ($('#noReturn').val() != '') {
+                    returnDatatable();
                 } else {
                     $('#returnProducts-table').DataTable({})
                 }
@@ -393,8 +393,56 @@
 
                 $('#btnReturn').click(function(e) {
                     e.preventDefault();
-                    $('#returnProducts-table').DataTable({})
+                    returnDatatable();
                 });
+
+                function returnDatatable() {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('return.showReturnDatatable') }}",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            noReturn: $('#noReturn').val()
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            console.log(response);
+                            // $('#error-message').remove();
+                            // $("#noLaporanHidden").val(response.laporan.no_laporan);
+
+                            $('#returnProducts-table').DataTable().destroy();
+
+                            $('#returnProducts-table').DataTable({
+                                processing: true,
+                                data: response.datatable.original.
+                                data,
+                                columns: [{
+                                        data: 'nama_produk',
+                                        name: 'nama_produk'
+                                    },
+                                    {
+                                        data: 'jumlah',
+                                        name: 'jumlah'
+                                    },
+                                    {
+                                        data: 'satuan',
+                                        name: 'satuan'
+                                    },
+                                ],
+                                order: [
+                                    [0, 'asc']
+                                ],
+                            });
+                        },
+                        error: function(response) {
+                            if (response.responseJSON && response.responseJSON.redirect) {
+                                window.location.href = response.responseJSON.redirect;
+                            } else {
+                                // window.location.href = "{{ url()->previous() }}";
+                            }
+                        }
+                    });
+                }
                 /* end::return */
                 
             });

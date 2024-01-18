@@ -25,16 +25,23 @@ class ReturnProductController extends Controller
 
     public function show($noReturn, ReturnProductDataTable $datatable)
     {
-        $laporan = Laporan::where('no_laporan', $noReturn)->first();
-        $satuans = Satuan::all();
+        $return = ReturnPenjualan::where('no_return', $noReturn)->first();
 
-        return $datatable->render('pages.laporan.detail', [
-            'laporan' => $laporan,
-            'satuans' => $satuans
+        return $datatable->render('pages.return.detail', [
+            'return' => $return,
         ]);
     }
 
-    public function showReturn(Request $request)
+    public function showReturnDatatable(Request $request, ReturnProductDataTable $returnProductDataTable)
+    {
+        return response()->json([
+            'datatable' => $returnProductDataTable->with([
+                'no_return' => $request->noReturn
+            ])->ajax()
+        ]);
+    }
+
+    public function showLaporanDatatable(Request $request)
     {
         $laporan = Laporan::where('no_laporan', $request->noStruk)->first();
 
@@ -94,23 +101,25 @@ class ReturnProductController extends Controller
         $newReturnNo = $datePart . $numericPartPadded;
 
         $returnPenjualan = ReturnPenjualan::create([
-            'no_return' => "return-" . $newReturnNo,
+            'no_return' => $newReturnNo,
             'laporan_id' => $laporan->id,
             'user_id' => auth()->user()->id,
         ]);
 
         foreach ($request->product_id as $key => $product_id) {
-            $product = Product::find($product_id);
-            ReturnProduct::create([
-                'return_penjualan_id' => $returnPenjualan->id,
-                'product_id' => $product_id,
-                'jumlah' => $request->jumlah[$key],
-                'satuan' => $request->satuan[$key],
-            ]);
+            if ($request->jumlah[$key] > 1) {
+                $product = Product::find($product_id);
+                ReturnProduct::create([
+                    'return_penjualan_id' => $returnPenjualan->id,
+                    'product_id' => $product_id,
+                    'jumlah' => $request->jumlah[$key],
+                    'satuan' => $request->satuan[$key],
+                ]);
 
-            $product->update([
-                'stok' => $product->stok - convertUnit($product->satuan->nama, $laporan->laporan_products[$key]->satuan, $request->jumlah[$key]),
-            ]);
+                $product->update([
+                    'stok' => $product->stok - convertUnit($product->satuan->nama, $laporan->laporan_products[$key]->satuan, $request->jumlah[$key]),
+                ]);
+            }
         }
 
         Session::flash('strukUrl', route('invoiceReturn', $returnPenjualan->no_return));

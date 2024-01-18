@@ -98,7 +98,8 @@ Route::middleware('auth')->group(function () {
             Route::get('change-category', [CashierController::class, 'changeSatuan'])->name('cashier.changeSatuan');
         });
 
-        Route::get('showReturn', [ReturnProductController::class, 'showReturn'])->name('return.showReturn');
+        Route::get('showReturnDatatable', [ReturnProductController::class, 'showReturnDatatable'])->name('return.showReturnDatatable');
+        Route::get('showLaporanDatatable', [ReturnProductController::class, 'showLaporanDatatable'])->name('return.showLaporanDatatable');
         Route::resource('return', ReturnProductController::class);
         Route::post('returnProduct', [ReturnProductController::class, 'returnProduct'])->name('returnProduct');
     });
