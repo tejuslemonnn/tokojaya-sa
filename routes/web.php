@@ -53,11 +53,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::resource('laporan', LaporanController::class);
         Route::get('/laporan-table', [LaporanController::class, 'laporansTable'])->name('laporan.table');
-        Route::get('pdf/${no_laporan}', [LaporanController::class, 'pdfDetail'])->name('laporan.pdfDetail');
-        Route::get('pdf-all/{shift?}/{from_date?}/{end_date?}', [LaporanController::class, 'pdf'])->name('laporan.pdf');
+        Route::get('pdf-laporan/${no_laporan}', [LaporanController::class, 'pdfDetail'])->name('laporan.pdfDetail');
+        Route::get('pdf-laporan-all/{shift?}/{from_date?}/{end_date?}', [LaporanController::class, 'pdf'])->name('laporan.pdf');
         Route::resource('categories', CategoriesController::class);
         Route::resource('satuans', SatuanController::class);
         Route::get('return/{no_laporan}', [ReturnProductController::class, 'show'])->name('return.show');
+        Route::get('pdf-return/${no_return}', [ReturnProductController::class, 'pdfDetail'])->name('return.pdfDetail');
+        Route::get('pdf-return-all/{shift?}/{from_date?}/{end_date?}', [ReturnProductController::class, 'pdf'])->name('return.pdf');
     });
 
     // Account pages
@@ -85,7 +87,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('products', ProductsController::class)->only('index', 'show');
     Route::post('products/cetak-barcode', [ProductsController::class, 'cetakBarcode'])->name('products.cetak-barcode');
-
+    
     Route::group(['middleware' => ['permission:manage sale']], function () {
         Route::group(['prefix' => 'cashier'], function () {
             Route::get('/', [CashierController::class, 'index'])->name('cashier');

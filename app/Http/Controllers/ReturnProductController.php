@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Satuan;
 use App\Models\Laporan;
 use App\Models\Product;
@@ -9,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\ReturnProduct;
 use App\Models\LaporanProducts;
 use App\Models\ReturnPenjualan;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -101,7 +104,7 @@ class ReturnProductController extends Controller
         $newReturnNo = $datePart . $numericPartPadded;
 
         $returnPenjualan = ReturnPenjualan::create([
-            'no_return' => $newReturnNo,
+            'no_return' =>  $newReturnNo,
             'laporan_id' => $laporan->id,
             'user_id' => auth()->user()->id,
         ]);
@@ -132,5 +135,47 @@ class ReturnProductController extends Controller
         $return = ReturnPenjualan::with('returnProducts')->where('no_return', $invoiceReturn)->first();
 
         return view('pages.invoice.invoice_return', ['return' => $return]);
+    }
+
+    public function pdfDetail($no_return)
+    {
+        $return = ReturnPenjualan::where('no_return', $no_return)->first();
+
+        $pdf = Pdf::loadView('pages.return.pdfDetail', [
+            'return' => $return
+        ])->setPaper('a4', 'potrait');
+        return $pdf->download('return_' . $return->no_return . '.pdf');
+    }
+
+    public function pdf($shift = null, $fromDate = null, $endDate = null)
+    {
+        $shift = ($shift == 'semua') ? null : $shift;
+
+        $returns = DB::table('return_penjualans')
+            ->leftJoin('users', 'return_penjualans.user_id', '=', 'users.id')
+            ->leftJoin('user_infos', 'return_penjualans.user_id', '=', 'user_infos.user_id')
+            ->leftJoin('return_products', 'return_penjualans.id', '=', 'return_products.return_penjualan_id')
+            ->select(
+                'return_penjualans.*',
+                'user_infos.shift as shift_kerja',
+                'users.name as kasir_name',
+                DB::raw('COUNT(return_products.id) as return_products_count')
+            )
+            ->when(intval($shift), function ($query, $shift) {
+                return $query->where('user_infos.shift', $shift);
+            })
+            ->when($fromDate, function ($query, $fromDate) {
+                return $query->whereDate('return_penjualans.created_at', '>=', Carbon::parse($fromDate)->format('Y-m-d H:i:s'));
+            })
+            ->when($endDate, function ($query, $endDate) {
+                return $query->whereDate('return_penjualans.created_at', '<=', Carbon::parse($endDate)->format('Y-m-d H:i:s'));
+            })
+            ->groupBy('return_penjualans.id', 'user_infos.shift', 'users.name')
+            ->get();
+
+        $pdf = Pdf::loadView('pages.return.pdf', [
+            'returns' => $returns
+        ])->setPaper('a4', 'potrait');
+        return $pdf->download('Returns' . Carbon::now() . '.pdf');
     }
 }

@@ -22,7 +22,7 @@
                         Struk
                     </a>
 
-                    <a href="" class="btn btn-sm btn-danger mx-2">
+                    <a href="{{route('return.pdfDetail', $return->no_return)}}" class="btn btn-sm btn-danger mx-2">
                         PDF
                     </a>
                 </div>

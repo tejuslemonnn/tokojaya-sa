@@ -37,28 +37,51 @@ class LaporanController extends Controller
         ])->ajax();
     }
 
-    public function returnProductDataTable()
+    public function returnProductDataTable(Request $request)
     {
 
         $model = ReturnPenjualan::query()
-            ->join('laporans', 'return_penjualans.laporan_id', '=', 'laporans.id')
+            ->leftjoin('laporans', 'return_penjualans.laporan_id', '=', 'laporans.id')
+            ->leftJoin('users', 'return_penjualans.user_id', '=', 'users.id')
+            ->leftJoin('user_infos', 'return_penjualans.user_id', '=', 'user_infos.user_id')
             ->select([
                 'return_penjualans.*',
                 'laporans.no_laporan as no_laporan',
-            ]);
+                'users.name as nama_kasir',
+                'user_infos.shift as shift_kerja'
+            ])
+            ->when(intval($request->shift), function ($query, $shift) {
+                return $query->where('user_infos.shift', $shift);
+            })
+            ->when($request->from_date, function ($query, $fromDate) {
+                return $query->whereDate('return_penjualans.created_at', '>=', Carbon::parse($fromDate)->format('Y-m-d H:i:s'));
+            })
+            ->when($request->end_date, function ($query, $endDate) {
+                return $query->whereDate('return_penjualans.created_at', '<=', Carbon::parse($endDate)->format('Y-m-d H:i:s'));
+            });;
 
         return DataTables::of($model)
             ->editColumn('no_return', function (ReturnPenjualan $model) {
                 return $model->no_return;
             })
-            ->editColumn('no_laporan', function (ReturnPenjualan $model) {
-                return $model->laporan->no_laporan;
+            ->editColumn('laporan_id', function (ReturnPenjualan $model) {
+                return $model->no_laporan;
+            })
+            ->editColumn('user_id', function (ReturnPenjualan $model) {
+                return $model->nama_kasir;
+            })
+            ->editColumn('shift_kerja', function (ReturnPenjualan $model) {
+                return $model->kasir->info->shift;
             })
             ->editColumn('created_at', function (ReturnPenjualan $model) {
                 return Carbon::parse($model->created_at)->format('Y-m-d H:i');
             })
-            // ->addColumn('action', 'returnproduct.action')
-            // ->rawColumns(['action'])
+            ->addColumn('action', function (ReturnPenjualan $model) {
+                return  '<a href="' . route('return.show', $model->no_laporan) . '" class="btn btn-sm btn-warning my-2 mx-2 btn-active-light">
+                Detail
+            </a>';
+            })
+            ->rawColumns(['action'])
             ->make(true);
     }
 
@@ -88,7 +111,7 @@ class LaporanController extends Controller
         return view('pages.invoice.index', ['laporan' => $laporan]);
     }
 
-    public function pdf($shift, $fromDate, $endDate)
+    public function pdf($shift = null, $fromDate = null, $endDate = null)
     {
         $shift = ($shift == 'semua') ? null : $shift;
 
