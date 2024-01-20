@@ -108,11 +108,24 @@
                 <div>{{ $item->jumlah }} {{ $item->satuan }}</div>
                 <div>Rp.{{ number_format($item->sub_total, 0, ',', '.') }}</div>
             </div>
-            @if ($key != count($laporan->laporan_products) - 1)
-                <hr>
-            @endif
+            <hr>
         @endforeach
-        <hr>
+        @if (count($laporan->laporan_return_products) > 0)
+        <div class="flex-container" style="margin-bottom: 10px; text-align:right;">
+            <div style="text-align: center;font-weight: bold;">Return Produk</div>
+        </div>
+        <div class="flex-container" style="margin-bottom: 10px; text-align:right;">
+            <div style="text-align: left;">Nama Produk</div>
+            <div>Jumlah</div>
+        </div>
+            @foreach ($laporan->laporan_return_products as $key => $item)
+                <div class="flex-container" style="text-align: right;">
+                    <div style="text-align: left;">{{ $item->product->nama_produk }}</div>
+                    <div>{{ $item->jumlah }} {{ $item->satuan }}</div>
+                </div>
+                <hr>
+            @endforeach
+        @endif
         <div class="flex-container" style="text-align: right; margin-top: 10px;">
             <div>
                 <ul>

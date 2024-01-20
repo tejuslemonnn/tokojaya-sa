@@ -12,6 +12,8 @@ use App\Models\LaporanProducts;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\DataTables\CashierDataTable;
 use App\Http\Controllers\Controller;
+use App\Models\LaporanProductReturns;
+use App\Models\ReturnPenjualan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
@@ -26,6 +28,7 @@ class CashierController extends Controller
 
     public function cetakStruk(Request $request)
     {
+        $return = ReturnPenjualan::where('no_return', $request->no_return)->first();
 
         if ($request->kembali < 0) {
             return redirect()->back()->with('error', 'Uang yang dibayar kurang');
@@ -52,6 +55,25 @@ class CashierController extends Controller
             'bayar' => $request->bayar,
             'kembali' => intval($request->kembali)
         ]);
+
+        if(!empty($return)){
+            foreach ($return->returnProducts as $value) {
+                LaporanProductReturns::create([
+                    'laporan_id' => $laporan->id,
+                    'product_id' => $value->product_id,
+                    'jumlah' => $value->jumlah,
+                    'satuan' => $value->satuan,
+                ]);
+    
+                $product = Product::find($value->product_id);
+                $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
+    
+                $product->update([
+                    'stok' => $stok
+                ]);
+            }
+        }
+        
 
         foreach ($cashier->detail_cashier as $value) {
             LaporanProducts::create([

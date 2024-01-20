@@ -70,6 +70,7 @@
                         <div class="card-body border" style="padding: 1rem 1.25rem !important">
                             <form action="{{ route('cashier.cetakStruk') }}" method="POST" id="cetakStrukForm">
                                 @csrf
+                                <input type="hidden" name="no_return" id="noReturnHidden">
                                 <div class="form-group row text-center mb-3">
                                     <label for="total" class="col-3 control-label">Total</label>
                                     <div class="col-8">
@@ -130,7 +131,7 @@
                 <label for="no_return" class="col-lg-2 control-label">Kode Return</label>
                 <div class="col-lg-4 d-flex">
                     <input type="text" name="no_return" class="form-control"
-                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noReturn">
+                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noReturn" value="{{old('no_return')}}">
                     <button type="button" class="btn btn-sm btn-primary"
                         style="border-top-left-radius: 0px;border-bottom-left-radius: 0px" id="btnReturn"><i
                             class="fa fa-arrow-right"></i></button>
@@ -382,7 +383,7 @@
                 });
 
                 /* end::cashier */
-                
+
                 /* begin::return */
                 if ($('#noReturn').val() != '') {
                     returnDatatable();
@@ -408,7 +409,7 @@
                         success: function(response) {
                             console.log(response);
                             // $('#error-message').remove();
-                            // $("#noLaporanHidden").val(response.laporan.no_laporan);
+                            $("#noReturnHidden").val(response.noReturn);
 
                             $('#returnProducts-table').DataTable().destroy();
 
@@ -438,13 +439,14 @@
                             if (response.responseJSON && response.responseJSON.redirect) {
                                 window.location.href = response.responseJSON.redirect;
                             } else {
-                                // window.location.href = "{{ url()->previous() }}";
+                                $('#noReturn').val('');
+                                window.location.href = "{{ route('cashier') }}";
                             }
                         }
                     });
                 }
                 /* end::return */
-                
+
             });
 
             function debounce(func, delay) {

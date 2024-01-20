@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 use App\DataTables\ReturnProductDataTable;
 use App\DataTables\LaporanProductsDataTable;
+use App\Models\LaporanProductReturns;
 use App\Models\LaporanProducts;
 use App\Models\Product;
 use App\Models\ReturnPenjualan;
@@ -35,54 +36,6 @@ class LaporanController extends Controller
             'from_date' => $request->from_date,
             'end_date' => $request->end_date,
         ])->ajax();
-    }
-
-    public function returnProductDataTable(Request $request)
-    {
-
-        $model = ReturnPenjualan::query()
-            ->leftjoin('laporans', 'return_penjualans.laporan_id', '=', 'laporans.id')
-            ->leftJoin('users', 'return_penjualans.user_id', '=', 'users.id')
-            ->leftJoin('user_infos', 'return_penjualans.user_id', '=', 'user_infos.user_id')
-            ->select([
-                'return_penjualans.*',
-                'laporans.no_laporan as no_laporan',
-                'users.name as nama_kasir',
-                'user_infos.shift as shift_kerja'
-            ])
-            ->when(intval($request->shift), function ($query, $shift) {
-                return $query->where('user_infos.shift', $shift);
-            })
-            ->when($request->from_date, function ($query, $fromDate) {
-                return $query->whereDate('return_penjualans.created_at', '>=', Carbon::parse($fromDate)->format('Y-m-d H:i:s'));
-            })
-            ->when($request->end_date, function ($query, $endDate) {
-                return $query->whereDate('return_penjualans.created_at', '<=', Carbon::parse($endDate)->format('Y-m-d H:i:s'));
-            });;
-
-        return DataTables::of($model)
-            ->editColumn('no_return', function (ReturnPenjualan $model) {
-                return $model->no_return;
-            })
-            ->editColumn('laporan_id', function (ReturnPenjualan $model) {
-                return $model->no_laporan;
-            })
-            ->editColumn('user_id', function (ReturnPenjualan $model) {
-                return $model->nama_kasir;
-            })
-            ->editColumn('shift_kerja', function (ReturnPenjualan $model) {
-                return $model->kasir->info->shift;
-            })
-            ->editColumn('created_at', function (ReturnPenjualan $model) {
-                return Carbon::parse($model->created_at)->format('Y-m-d H:i');
-            })
-            ->addColumn('action', function (ReturnPenjualan $model) {
-                return  '<a href="' . route('return.show', $model->no_laporan) . '" class="btn btn-sm btn-warning my-2 mx-2 btn-active-light">
-                Detail
-            </a>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
     }
 
     public function show($noLaporan, LaporanProductsDataTable $datatable)
@@ -149,5 +102,29 @@ class LaporanController extends Controller
             'laporan' => $laporan
         ])->setPaper('a4', 'potrait');
         return $pdf->download('Laporan_' . $laporan->no_laporan . '.pdf');
+    }
+
+    public function laporanProductReturnsDatatable(Request $request)
+    {
+        $laporan = Laporan::where('no_laporan', $request->no_laporan)->first();
+        $datatable = DataTables::eloquent(LaporanProductReturns::query()
+            ->join('products', 'laporan_product_returns.product_id', '=', 'products.id')
+            ->where('laporan_product_returns.laporan_id', $laporan->id)
+            ->select([
+                'laporan_product_returns.*',
+                'products.nama_produk',
+            ]))
+            ->editColumn('nama_produk', function (LaporanProductReturns $item) {
+                return $item->product->nama_produk;
+            })
+            ->editColumn('jumlah', function (LaporanProductReturns $item) {
+                return $item->jumlah;
+            })
+            ->editColumn('satuan', function (LaporanProductReturns $item) {
+                return $item->satuan;
+            })
+            ->toJson(); 
+
+        return $datatable;
     }
 }

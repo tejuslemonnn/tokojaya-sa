@@ -21,6 +21,11 @@ class Laporan extends Model
         return $this->hasMany(LaporanProducts::class);
     }
 
+    public function laporan_return_products()
+    {
+        return $this->hasMany(LaporanProductReturns::class);
+    }
+
     public function product()
     {
         return $this->hasOneThrough(Product::class, LaporanProducts::class, 'laporan_id', 'id', 'id', 'product_id');

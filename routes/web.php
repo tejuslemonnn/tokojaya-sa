@@ -52,7 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::group(['middleware' => ['permission:manage shop|manage account']], function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::resource('laporan', LaporanController::class);
-        Route::get('/laporan-table', [LaporanController::class, 'laporansTable'])->name('laporan.table');
+        Route::get('laporan-table', [LaporanController::class, 'laporansTable'])->name('laporan.table');
+        Route::get('laporanProductReturnsDatatable', [LaporanController::class, 'laporanProductReturnsDatatable'])->name('laporanProductReturnsDatatable');
         Route::get('pdf-laporan/${no_laporan}', [LaporanController::class, 'pdfDetail'])->name('laporan.pdfDetail');
         Route::get('pdf-laporan-all/{shift?}/{from_date?}/{end_date?}', [LaporanController::class, 'pdf'])->name('laporan.pdf');
         Route::resource('categories', CategoriesController::class);
@@ -108,7 +109,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('invoiceReturn/{no_return}', [ReturnProductController::class, 'invoice'])->name('invoiceReturn');
     Route::get('invoice/{id}', [LaporanController::class, 'invoice'])->name('invoice');
-    Route::get('returnProductDatatable', [LaporanController::class, 'returnProductDatatable'])->name('returnProductDatatable');
+    Route::get('returnProductDatatable', [ReturnProductController::class, 'returnProductDatatable'])->name('returnProductDatatable');
 });
 
 

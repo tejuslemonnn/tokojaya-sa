@@ -74,8 +74,39 @@
                 </div>
             </div>
 
-            @include('partials.widgets.master._table')
+            <nav class="mt-2">
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-penjualan-tab" data-bs-toggle="tab"
+                        data-bs-target="#nav-penjualan" type="button" role="tab" aria-controls="nav-penjualan"
+                        aria-selected="true">Penjualan</button>
+                    <button class="nav-link" id="nav-return-tab" data-bs-toggle="tab" data-bs-target="#nav-return"
+                        type="button" role="tab" aria-coFntrols="nav-return" aria-selected="false">Return</button>
+                </div>
+            </nav>
 
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade active show" id="nav-penjualan" role="tabpanel"
+                    aria-labelledby="nav-penjualan-tab">
+                    @include('partials.widgets.master._table')
+                </div>
+
+                <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab"
+                    tabindex="0">
+                    <div class="table-responsive">
+                        <table id="returnPenjualanTable"
+                            class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
+                            style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Nama Produk</th>
+                                    <th>Jumlah</th>
+                                    <th>Satuan</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <!--end::cardBody-->
 
@@ -87,64 +118,35 @@
         </div>
         <!--end::Actions-->
 
-        <!-- Modal -->
-        @foreach ($laporan->laporan_products as $laporan_product)
-            <div class="modal fade" id="staticBackdrop{{ $laporan_product->id }}" data-bs-backdrop="static"
-                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Return Product</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <form action="{{ route('returnProduct') }}" method="post">
-                            @csrf
-                            <div class="modal-body">
-                                <input type="hidden" name="laporan_id" value="{{ $laporan->id }}">
-                                <input type="hidden" name="laporan_product_id" value="{{ $laporan_product->id }}">
-                                <input type="hidden" name="product_id" value="{{ $laporan_product->product->id }}">
-
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon2">Produk</span>
-                                    <input type="text" class="form-control"
-                                        value="{{ $laporan_product->product->nama_produk }}" disabled>
-                                </div>
-
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon2">Jumlah</span>
-                                    <input type="number" class="form-control" name="jumlah">
-                                </div>
-
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon2">Satuan</span>
-                                    <select class="form-select" aria-label="Satuan" name="satuan">
-                                        @foreach ($satuans as $satuan)
-                                            <option value="{{ $satuan->nama }}"
-                                                {{ $laporan_product->satuan == $satuan->nama ? 'selected' : '' }}>
-                                                {{ $satuan->nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text" id="basic-addon2">Deskripsi</span>
-                                    <select class="form-select" aria-label="Deskripsi" name="deskripsi">
-                                        <option value="Barang Rusak">Barang Rusak</option>
-                                        <option value="Expired">Expired</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Return</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        @endforeach
     </div>
+
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
+                var returnPenjualanTable = $('#returnPenjualanTable').DataTable({
+                    serverSide: true,
+                    processing: true,
+                    ajax: {
+                        url: '{{ route('laporanProductReturnsDatatable') }}',
+                        data: function(d) {
+                            d.no_laporan = {{ $laporan->no_laporan }}
+                        }
+                    },
+                    columns: [{
+                            data: 'nama_produk',
+                            name: 'nama_produk',
+                        },
+                        {
+                            data: 'jumlah',
+                            name: 'jumlah',
+                        },
+                        {
+                            data: 'satuan',
+                            name: 'satuan',
+                        },
+                    ],
+                });
+            });
+        </script>
+    @endpush
 </x-base-layout>
