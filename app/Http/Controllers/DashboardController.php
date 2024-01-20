@@ -11,34 +11,44 @@ use App\Http\Controllers\Controller;
 class DashboardController extends Controller
 {
     public function index() {
-        $products = Product::all();
+        $productsCount = Product::count();
         $totalIncome = Laporan::calculateTotal();
+        $totalIncomeToday = Laporan::calculateTotal(today());
         $laporans = Laporan::all();
+        $products = Product::orderBy('stok', 'asc')->limit(10)->get();
 
         return view('pages.dashboard.index', [
-            'productCounts' => count($products),
+            'productCounts' => $productsCount,
             'totalIncome' => $totalIncome,
-            'laporans' => $laporans
+            'totalIncomeToday' => $totalIncomeToday,
+            'laporans' => $laporans,
+            'products' => $products
         ]);
     }
 
     public function incomeStatistics() {
         $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+    
         $data = Laporan::all();
-
-        $d = $data->groupBy(function ($data) {
-            return Carbon::parse($data->created_at)->format('Y-m-d');
-        })->map(function ($data) {
-            return [
-                // 'total'  => 'Rp.' . number_format($data->sum('total'), 0, ',', '.') . '.00',
-                'total' => $data->sum('total')
+    
+        $result = [];
+    
+        foreach ($months as $month) {
+            $result[$month] = [
+                'total' => 0,
             ];
-        })->sortKeys()->mapWithKeys(function ($data, $key) use ($months) {
-            return [$months[Carbon::parse($key)->format('n') - 1] => $data];
+        }
+    
+        $groupedData = $data->groupBy(function ($data) {
+            return Carbon::parse($data->created_at)->format('Y-m-d');
         });
-        
-
-        return $d;
+    
+        foreach ($groupedData as $key => $group) {
+            $month = Carbon::parse($key)->format('M');
+            $result[$month]['total'] = $group->sum('total');
+        }
+    
+        return $result;
     }
+    
 }

@@ -114,7 +114,7 @@
                 <div class="col-lg-8 fv-row">
                     <select name="satuan_id" aria-label="{{ __('Pilih satuan') }}" data-control="select2"
                         data-placeholder="{{ __('Pilih satuan...') }}"
-                        class="form-select form-select-solid form-select-lg fw-bold" required>
+                        class="form-select form-select-solid form-select-lg fw-bold" disabled>
                         <option value="">{{ __('Pilih satuan...') }}</option>
                         @foreach ($satuans as $satuan)
                             <option value="{{ $satuan->id }}"

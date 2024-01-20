@@ -170,8 +170,8 @@ var KTWidgets = function () {
     //     });
     // }
 
-    var initIncomeStatistics = function () {
-        var charts = document.querySelectorAll('.income-statistics-chart');
+    var initIncomeStatisticstest = function () {
+        var charts = document.querySelectorAll('.income-statistics-chart-test');
 
         [].slice.call(charts).map(function (element) {
             var height = parseInt(KTUtil.css(element, 'height'));
@@ -320,6 +320,163 @@ var KTWidgets = function () {
                 var chart = new ApexCharts(element, options);
                 chart.render();
             }); 
+        });
+    }
+
+    var initIncomeStatistics = function () {
+        var charts = document.querySelectorAll('.income-statistics-chart');
+
+        [].slice.call(charts).map(function (element) {
+            var height = parseInt(KTUtil.css(element, 'height'));
+
+            if (!element) {
+                return;
+            }
+
+            var color = element.getAttribute('data-kt-chart-color');
+
+            var labelColor = KTUtil.getCssVariableValue('--bs-' + 'gray-800');
+            var strokeColor = KTUtil.getCssVariableValue('--bs-' + 'gray-300');
+            var baseColor = KTUtil.getCssVariableValue('--bs-' + color);
+            var lightColor = KTUtil.getCssVariableValue('--bs-light-' + color);
+
+            var options = {
+                /*series: [{
+                    name: 'Net Profit',
+                    data: [15, 25, 15, 40, 20, 50]
+                }],*/
+                chart: {
+                    fontFamily: 'inherit',
+                    type: 'area',
+                    height: height,
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    },
+                    sparkline: {
+                        enabled: true
+                    }
+                },
+                plotOptions: {},
+                legend: {
+                    show: false
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                fill: {
+                    type: 'solid',
+                    opacity: 1
+                },
+                stroke: {
+                    curve: 'smooth',
+                    show: true,
+                    width: 3,
+                    colors: [baseColor]
+                },
+                xaxis: {
+                    // categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    axisBorder: {
+                        show: false,
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                    labels: {
+                        show: false,
+                        style: {
+                            colors: labelColor,
+                            fontSize: '12px'
+                        }
+                    },
+                    crosshairs: {
+                        show: false,
+                        position: 'front',
+                        stroke: {
+                            color: strokeColor,
+                            width: 1,
+                            dashArray: 3
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        formatter: undefined,
+                        offsetY: 0,
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                yaxis: {
+                    min: 0,
+                    max: 60,
+                    labels: {
+                        show: false,
+                        style: {
+                            colors: labelColor,
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                states: {
+                    normal: {
+                        filter: {
+                            type: 'none',
+                            value: 0
+                        }
+                    },
+                    hover: {
+                        filter: {
+                            type: 'none',
+                            value: 0
+                        }
+                    },
+                    active: {
+                        allowMultipleDataPointsSelection: false,
+                        filter: {
+                            type: 'none',
+                            value: 0
+                        }
+                    }
+                },
+                tooltip: {
+                    style: {
+                        fontSize: '12px'
+                    },
+                    y: {
+                        formatter: function (val) {
+                            return "Rp." + val.toLocaleString('id-ID');
+                        }
+                    }
+                },
+                colors: [lightColor],
+                markers: {
+                    colors: [lightColor],
+                    strokeColor: [baseColor],
+                    strokeWidth: 3
+                }
+            };
+
+            getData(element.getAttribute('data-kt-chart-url'), function (response) {
+                var dataValues = Object.values(response.data).map(function (data) {
+                    return `${data.total}`
+                })
+
+                options['series'] = [{
+                    name: 'Pendapat Bulan ini',
+                    data: dataValues
+                }];
+
+                // get keys as months
+                options['xaxis']['categories'] = Object.keys(response.data);
+                options['yaxis']['max'] = Math.max(...dataValues);
+
+                // render chart
+                var chart = new ApexCharts(element, options);
+                chart.render();
+            });
         });
     }
 

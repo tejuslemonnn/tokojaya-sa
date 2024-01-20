@@ -31,8 +31,14 @@ class Laporan extends Model
         return $this->hasOneThrough(Product::class, LaporanProducts::class, 'laporan_id', 'id', 'id', 'product_id');
     }
 
-    public static function calculateTotal()
+    public static function calculateTotal($date = null)
     {
-        return self::sum('total');
+        $query = self::query();
+
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        }
+
+        return $query->sum('total');
     }
 }
