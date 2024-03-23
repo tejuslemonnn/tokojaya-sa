@@ -21,6 +21,7 @@ class CreateReturnProductsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
             $table->float('jumlah');
             $table->string('satuan');
+            $table->integer('sub_total');
             $table->timestamps();
         });
     }

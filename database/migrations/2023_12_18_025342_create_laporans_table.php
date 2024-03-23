@@ -18,6 +18,7 @@ class CreateLaporansTable extends Migration
             $table->string('no_laporan')->unique();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->integer('total_return')->nullable();
             $table->integer('total');
             $table->integer('bayar');
             $table->integer('kembali');

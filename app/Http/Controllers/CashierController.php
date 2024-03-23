@@ -63,6 +63,7 @@ class CashierController extends Controller
                     'product_id' => $value->product_id,
                     'jumlah' => $value->jumlah,
                     'satuan' => $value->satuan,
+                    'sub_total' => $value->sub_total,
                 ]);
     
                 $product = Product::find($value->product_id);

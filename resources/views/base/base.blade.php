@@ -57,6 +57,19 @@ License: {{ theme()->getOption('product', 'license') }}
         {{ theme()->getView('partials/trackers/_ga-tag-manager-for-head') }}
     @endif
 
+    <style>
+        /* disable key up and down input */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
     @yield('styles')
 
 </head>
@@ -103,7 +116,7 @@ License: {{ theme()->getOption('product', 'license') }}
         {{ theme()->getView('partials/trackers/_ga-tag-manager-for-body') }}
     @endif
 
-    <script src="{{asset('assets/js/html5-qrcode.js')}}"></script>
+    <script src="{{ asset('assets/js/html5-qrcode.js') }}"></script>
 
     @yield('scripts')
     @stack('scripts')

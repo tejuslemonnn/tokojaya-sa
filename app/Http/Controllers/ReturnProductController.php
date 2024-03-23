@@ -37,11 +37,13 @@ class ReturnProductController extends Controller
 
     public function showReturnDatatable(Request $request, ReturnProductDataTable $returnProductDataTable)
     {
+        $return = ReturnPenjualan::where('no_return', $request->noReturn)->first();
         return response()->json([
             'datatable' => $returnProductDataTable->with([
                 'no_return' => $request->noReturn
             ])->ajax(),
-            'noReturn' => $request->noReturn
+            'noReturn' => $request->noReturn,
+            'return' => $return
         ]);
     }
 
@@ -109,23 +111,49 @@ class ReturnProductController extends Controller
             'no_return' =>  $newReturnNo,
             'laporan_id' => $laporan->id,
             'user_id' => auth()->user()->id,
+            'total' => 0
         ]);
+
+        $total = 0;
 
         foreach ($request->product_id as $key => $product_id) {
             if ($request->jumlah[$key] > 0) {
                 $product = Product::find($product_id);
+
+                $reqSatuan = $request->satuan[$key];
+                $productSatuan = $product->satuan->nama;
+
+                $subTotal = 0;
+
+                if (strtolower(substr($productSatuan, 0, 1)) == 'k' && strtolower(substr($productSatuan, 1, 2)) == $reqSatuan) {
+                    $jumlah = $request->jumlah[$key] / 1000;
+                    $subTotal = $product->harga *  $jumlah - ($product->harga *  $jumlah * $product->diskon / 100);
+                } else  if (strtolower(substr($productSatuan, 0, 1)) == 'l' && strtolower(substr($reqSatuan, 1, 2)) == strtolower($productSatuan)) {
+                    $jumlah = $request->jumlah[$key] / 1000;
+                    $subTotal = $product->harga *  $jumlah - ($product->harga *  $jumlah * $product->diskon / 100);
+                } else {
+                    $subTotal = $product->harga *  $request->jumlah[$key] - ($product->harga *  $request->jumlah[$key] * $product->diskon / 100);
+                }
+
                 ReturnProduct::create([
                     'return_penjualan_id' => $returnPenjualan->id,
                     'product_id' => $product_id,
                     'jumlah' => $request->jumlah[$key],
                     'satuan' => $request->satuan[$key],
+                    'sub_total' => $subTotal,
                 ]);
 
                 $product->update([
-                    'stok' => $product->stok - convertUnit($product->satuan->nama, $laporan->laporan_products[$key]->satuan, $request->jumlah[$key]),
+                    'stok' => $product->stok - convertUnit($product->satuan->nama, $request->satuan[$key], $request->jumlah[$key]),
                 ]);
+
+                $total += $subTotal;
             }
         }
+
+        $returnPenjualan->update([
+            'total' => $total
+        ]);
 
         Session::flash('strukUrl', route('invoiceReturn', $returnPenjualan->no_return));
 

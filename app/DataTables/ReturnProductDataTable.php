@@ -31,6 +31,9 @@ class ReturnProductDataTable extends DataTable
             })
             ->editColumn('satuan', function (ReturnProduct $model) {
                 return $model->satuan;
+            })
+            ->editColumn('sub_total', function (ReturnProduct $model) {
+                return $model->sub_total;
             });
             // ->addColumn('action', 'returnproduct.action');
     }
@@ -85,6 +88,7 @@ class ReturnProductDataTable extends DataTable
             Column::make('nama_produk'),
             Column::make('jumlah'),
             Column::make('satuan'),
+            Column::make('sub_total'),
             // Column::computed('action')
             //     ->exportable(false)
             //     ->printable(false)

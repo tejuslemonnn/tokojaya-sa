@@ -72,6 +72,14 @@
                                 @csrf
                                 <input type="hidden" name="no_return" id="noReturnHidden">
                                 <div class="form-group row text-center mb-3">
+                                    <label for="total_return" class="col-3 control-label">Total Return</label>
+                                    <div class="col-8">
+                                        <input type="number" min="0" id="total_return"
+                                            class="form-control bg-secondary" readonly value="0"
+                                            name="total_return">
+                                    </div>
+                                </div>
+                                <div class="form-group row text-center mb-3">
                                     <label for="total" class="col-3 control-label">Total</label>
                                     <div class="col-8">
                                         <input type="number" min="0" id="total"
@@ -131,7 +139,8 @@
                 <label for="no_return" class="col-lg-2 control-label">Kode Return</label>
                 <div class="col-lg-4 d-flex">
                     <input type="text" name="no_return" class="form-control"
-                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noReturn" value="{{old('no_return')}}">
+                        style="border-top-right-radius: 0px;border-bottom-right-radius: 0px" id="noReturn"
+                        value="{{ old('no_return') }}">
                     <button type="button" class="btn btn-sm btn-primary"
                         style="border-top-left-radius: 0px;border-bottom-left-radius: 0px" id="btnReturn"><i
                             class="fa fa-arrow-right"></i></button>
@@ -151,6 +160,7 @@
                                             <th>Nama Produk</th>
                                             <th>Jumlah</th>
                                             <th>Satuan</th>
+                                            <th>Sub Total</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -304,6 +314,7 @@
                     let row = $(this).closest('tr');
                     let newValue = row.find('.quantity').val();
                     let satuan = row.find('.satuan').val();
+                    let subTotal = row.find('.subTotal');
 
                     $.ajax({
                         type: "GET",
@@ -354,17 +365,33 @@
                     let itemId = $(this).data('item-id');
                     let newValue = parseInt($(this).val());
                     let satuan = $row.find('.satuan').val();
-                    subTotal = $row.find('.subTotal')
+                    let subTotal = $row.find('.subTotal');
 
                     if (newValue > 0) {
                         addOrUpdate(itemId, newValue, satuan)
                             .then(response => {
-                                subTotal.text(`Rp.${response.detail_cashier.sub_total.toFixed(2)}`);
+                                let productStokBeforeConvert = response.detail_cashier.product.stok;
+                                let productStok = convertUnit(response.detail_cashier.product.satuan.nama,
+                                    satuan,
+                                    productStokBeforeConvert);
+
+                                if (newValue > productStok) {
+                                    alert(
+                                        `Jumlah yang dimasukkan melebihi stok yang tersedia. \n Stok ${response.detail_cashier.product.nama_produk} = ${productStok}`
+                                    );
+                                    $(this).val(productStok);
+                                    subTotal.text(
+                                        `Rp.${(productStok * response.detail_cashier.product.harga).toFixed(2)}`
+                                    );
+                                } else {
+                                    subTotal.text(`Rp.${response.detail_cashier.sub_total.toFixed(2)}`);
+                                }
                             })
                             .catch(error => {
                                 console.error(error);
                             });
                     }
+
                     if (newValue < 1) {
                         var isConfirmed = confirm('Apakah anda yakin ingin menghapus?');
                         if (isConfirmed) {
@@ -375,6 +402,7 @@
                         }
                     }
                 });
+
 
                 $('#bayar').keyup(function(e) {
                     var changedValue = $(this).val();
@@ -388,7 +416,8 @@
                 if ($('#noReturn').val() != '') {
                     returnDatatable();
                 } else {
-                    $('#returnProducts-table').DataTable({})
+                $("#total_return").val(0);
+                $('#returnProducts-table').DataTable({})
                 }
 
 
@@ -407,9 +436,27 @@
                         },
                         dataType: "json",
                         success: function(response) {
-                            console.log(response);
                             // $('#error-message').remove();
                             $("#noReturnHidden").val(response.noReturn);
+
+                            if ($("#total_return").val() == 0) {
+                                let total = $("#total").val();
+                                let totalBayar = parseInt(total) - parseInt(response.return.total);
+                                if(Math.sign(totalBayar) == 1){
+                                    $("#total").val(totalBayar);
+                                } else {
+                                    $("#total").val(0);
+                                }
+                            }
+
+
+                            if ($("#total").val() != $("kembali").val() && $("#total_return").val() == 0) {
+                                let kembali = $("#kembali").val();
+                                let totalKembali = parseInt(kembali) + parseInt(response.return.total);
+                                $("#kembali").val(totalKembali);
+                            }
+
+                            $('#total_return').val(response.return.total);
 
                             $('#returnProducts-table').DataTable().destroy();
 
@@ -428,6 +475,10 @@
                                     {
                                         data: 'satuan',
                                         name: 'satuan'
+                                    },
+                                    {
+                                        data: 'sub_total',
+                                        name: 'sub_total'
                                     },
                                 ],
                                 order: [
@@ -510,6 +561,23 @@
                         console.log('Error updating cart: ' + error.responseText);
                     }
                 });
+            }
+
+            function convertUnit(fromUnit, toUnit, quantity) {
+                fromUnit = fromUnit.toLowerCase();
+                toUnit = toUnit.toLowerCase();
+                if (fromUnit === 'kg' && toUnit === 'g') {
+                    return quantity * 1000; // Corrected to multiply by 1000
+                } else if (fromUnit === 'g' && toUnit === 'kg') {
+                    return quantity / 1000;
+                } else if (fromUnit === 'l' && toUnit === 'ml') {
+                    return quantity * 1000;
+                } else if (fromUnit === 'ml' && toUnit === 'l') {
+                    return quantity / 1000;
+                }
+
+                // Default: no conversion
+                return quantity;
             }
         </script>
     @endpush

@@ -100,16 +100,31 @@
         <div class="flex-container" style="margin-bottom: 10px; text-align:right;">
             <div style="text-align: left;">Nama Produk</div>
             <div>Jumlah</div>
+            <div>Sub Total</div>
         </div>
         @foreach ($return->returnProducts as $key => $item)
             <div class="flex-container" style="text-align: right;">
                 <div style="text-align: left;">{{ $item->product->nama_produk }}</div>
                 <div>{{ $item->jumlah }} {{ $item->satuan }}</div>
+                <div>Rp.{{ number_format($item->sub_total, 0, ',', '.') }}</div>
             </div>
             @if ($key != count($return->returnProducts) - 1)
                 <hr>
             @endif
         @endforeach
+        <hr>
+        <div class="flex-container" style="text-align: right; margin-top: 10px;">
+            <div>
+                <ul>
+                    <li>Grand Total</li>
+                </ul>
+            </div>
+            <div style="text-align: right;">
+                <ul>
+                    <li>Rp.{{ number_format($return->total, 0, ',', '.') }}</li>
+                </ul>
+            </div>
+        </div>
         <hr>
         <div class="header" style="margin-top: 50px;">
             <h3>Terimakasih</h3>
