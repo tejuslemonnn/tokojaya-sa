@@ -20,7 +20,7 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('satuan_id');
             $table->foreign('satuan_id')->references('id')->on('satuans')->onUpdate('cascade')->onDelete('cascade');
             $table->longText('foto')->nullable();
-            $table->integer('kode');
+            $table->bigInteger('kode');
             $table->string('nama_produk');
             $table->integer('harga');
             $table->float('stok');

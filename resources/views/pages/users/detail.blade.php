@@ -25,8 +25,9 @@
                     <div class="row">
                         <!--begin::Col-->
                         <div class="col-lg fv-row">
-                            <input readOnly type="text" name="name" class="form-control form-control-lg form-control-solid"
-                                placeholder="Name" value="{{ $user->name }}" />
+                            <input readOnly type="text" name="name"
+                                class="form-control form-control-lg form-control-solid" placeholder="Name"
+                                value="{{ $user->name }}" />
                         </div>
                         <!--end::Col-->
                     </div>
@@ -35,7 +36,7 @@
                 <!--end::Col-->
             </div>
             <!--end::Input group-->
-            
+
             <!--begin::Input group-->
             <div class="row mb-6">
                 <!--begin::Label-->
@@ -48,8 +49,34 @@
                     <div class="row">
                         <!--begin::Col-->
                         <div class="col-lg fv-row">
-                            <input readOnly type="text" name="username" class="form-control form-control-lg form-control-solid"
-                                placeholder="username" value="{{ $user->username }}" />
+                            <input readOnly type="text" name="username"
+                                class="form-control form-control-lg form-control-solid" placeholder="username"
+                                value="{{ $user->username }}" />
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Row-->
+                </div>
+                <!--end::Col-->
+            </div>
+            <!--end::Input group-->
+
+
+            <!--begin::Input group-->
+            <div class="row mb-6">
+                <!--begin::Label-->
+                <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ __('Shift') }}</label>
+                <!--end::Label-->
+
+                <!--begin::Col-->
+                <div class="col-lg-8">
+                    <!--begin::Row-->
+                    <div class="row">
+                        <!--begin::Col-->
+                        <div class="col-lg fv-row">
+                            <input readOnly type="text" name="Shift"
+                                class="form-control form-control-lg form-control-solid" placeholder="Shift"
+                                value="{{ $user->info->shift }}" />
                         </div>
                         <!--end::Col-->
                     </div>
@@ -71,8 +98,9 @@
                     <div class="row">
                         <!--begin::Col-->
                         <div class="col-lg fv-row">
-                            <input readOnly type="text" name="role" class="form-control form-control-lg form-control-solid"
-                                placeholder="Role" value="{{ $user->getRoleNames()->first() }}" />
+                            <input readOnly type="text" name="role"
+                                class="form-control form-control-lg form-control-solid" placeholder="Role"
+                                value="{{ $user->getRoleNames()->first() }}" />
                         </div>
                         <!--end::Col-->
                     </div>
@@ -122,8 +150,9 @@
                     <div class="row">
                         <!--begin::Col-->
                         <div class="col-lg fv-row">
-                            <input readOnly type="text" name="address" class="form-control form-control-lg form-control-solid"
-                                placeholder="Alamat" value="{{ $user->info->address }}" />
+                            <input readOnly type="text" name="address"
+                                class="form-control form-control-lg form-control-solid" placeholder="Alamat"
+                                value="{{ $user->info->address }}" />
                         </div>
                         <!--end::Col-->
                     </div>

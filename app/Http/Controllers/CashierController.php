@@ -56,7 +56,7 @@ class CashierController extends Controller
             'kembali' => intval($request->kembali)
         ]);
 
-        if(!empty($return)){
+        if (!empty($return)) {
             foreach ($return->returnProducts as $value) {
                 LaporanProductReturns::create([
                     'laporan_id' => $laporan->id,
@@ -65,16 +65,16 @@ class CashierController extends Controller
                     'satuan' => $value->satuan,
                     'sub_total' => $value->sub_total,
                 ]);
-    
+
                 $product = Product::find($value->product_id);
                 $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
-    
+
                 $product->update([
                     'stok' => $stok
                 ]);
             }
         }
-        
+
 
         foreach ($cashier->detail_cashier as $value) {
             LaporanProducts::create([
@@ -114,14 +114,21 @@ class CashierController extends Controller
         $product = Product::where('kode', $request->kode)->first();
 
         if (empty($product)) {
-            return redirect()->back()->with('error', 'Produk Tidak Ada');
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Produk Tidak Ada'], 422);
+            } else {
+                return redirect()->back()->with('error', 'Produk Tidak Ada');
+            }
         }
 
         if (!empty($cashier->detail_cashier)) {
             foreach ($cashier->detail_cashier as $key => $value) {
-                // ketika sudah ada
                 if ($cashier->user_id == auth()->user()->id && $value->product->kode == $request->kode) {
-                    return redirect()->back()->with('error', 'Produk sudah Ada');
+                    if ($request->ajax()) {
+                        return response()->json(['error' => 'Produk sudah Ada'], 422);
+                    } else {
+                        return redirect()->back()->with('error', 'Produk sudah Ada');
+                    }
                 }
             }
         }
@@ -141,7 +148,11 @@ class CashierController extends Controller
 
         $cashier->save();
 
-        return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
+        if ($request->ajax()) {
+            return response()->json(['success' => 'Produk berhasil ditambahkan!']);
+        } else {
+            return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
+        }
     }
 
     public function deleteCart($id)

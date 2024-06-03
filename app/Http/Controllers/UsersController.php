@@ -64,6 +64,7 @@ class UsersController extends Controller
             'username' => 'required|string|max:255',
             'password' => ['required', Password::defaults()],
             'role' => 'required|string|max:255',
+            'shift' => 'required',
         ]);
 
         $user = User::create([
@@ -74,10 +75,11 @@ class UsersController extends Controller
 
         $user->syncRoles([$validated['role']]);
 
-        UserInfo::create([
+        $info =        UserInfo::create([
             'user_id' => $user->id,
             'phone' => $request->phone,
             'address' => $request->address,
+            'shift' => (int)$request->shift
         ]);
 
         return redirect()->intended('/users')->with('success', 'Berhasil Menambahkan!');
@@ -125,12 +127,14 @@ class UsersController extends Controller
      */
     public function update($id, SettingsInfoRequest $request)
     {
+
         $user = User::find($id);
 
         $validated = [
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255',
             'role' => 'required|string|max:255',
+            'shift' => 'required',
         ];
 
         if (!empty($request->password)) {
@@ -157,6 +161,7 @@ class UsersController extends Controller
         $info->update([
             'phone' => $request->phone,
             'address' => $request->address,
+            'shift' => (int)$request->shift
         ]);
 
         $info->user()->associate($user);

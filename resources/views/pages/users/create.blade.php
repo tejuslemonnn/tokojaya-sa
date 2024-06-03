@@ -91,6 +91,30 @@
                 <div class="row mb-6">
                     <!--begin::Label-->
                     <label class="col-lg-4 col-form-label fw-bold fs-6">
+                        <span class="required">{{ __('Shift') }}</span>
+
+                        <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
+                            title="{{ __('Shift') }}"></i>
+                    </label>
+                    <!--end::Label-->
+
+                    <!--begin::Col-->
+                    <div class="col-lg-8 fv-row">
+                        <select name="shift" aria-label="{{ __('Pilih Shift') }}" data-control="select2"
+                            data-placeholder="{{ __('Pilih Shift...') }}"
+                            class="form-select form-select-solid form-select-lg fw-bold" required>
+                            <option value="1">Shift Pagi</option>
+                            <option value="2">Shift Malam</option>
+                        </select>
+                    </div>
+                    <!--end::Col-->
+                </div>
+                <!--end::Input group-->
+
+                <!--begin::Input group-->
+                <div class="row mb-6">
+                    <!--begin::Label-->
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">
                         <span class="required">{{ __('Role') }}</span>
 
                         <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip"
@@ -114,7 +138,6 @@
                     <!--end::Col-->
                 </div>
                 <!--end::Input group-->
-
 
                 <!--begin::Input group-->
                 <div class="row mb-6">

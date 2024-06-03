@@ -42,12 +42,6 @@ array_walk($menu, function ($val) {
     }
 });
 
-// Documentations pages
-// Route::prefix('documentation')->group(function () {
-//     Route::get('getting-started/references', [ReferencesController::class, 'index']);
-//     Route::get('getting-started/changelog', [PagesController::class, 'index']);
-// });
-
 Route::middleware('auth')->group(function () {
     Route::group(['middleware' => ['permission:manage shop|manage account']], function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
@@ -88,7 +82,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('products', ProductsController::class)->only('index', 'show');
     Route::post('products/cetak-barcode', [ProductsController::class, 'cetakBarcode'])->name('products.cetak-barcode');
-    
+
     Route::group(['middleware' => ['permission:manage sale']], function () {
         Route::group(['prefix' => 'cashier'], function () {
             Route::get('/', [CashierController::class, 'index'])->name('cashier');
@@ -106,17 +100,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('return', ReturnProductController::class);
         Route::post('returnProduct', [ReturnProductController::class, 'returnProduct'])->name('returnProduct');
     });
-    
+
     Route::get('invoiceReturn/{no_return}', [ReturnProductController::class, 'invoice'])->name('invoiceReturn');
     Route::get('invoice/{id}', [LaporanController::class, 'invoice'])->name('invoice');
     Route::get('returnProductDatatable', [ReturnProductController::class, 'returnProductDatatable'])->name('returnProductDatatable');
 });
 
 
-/**
- * Socialite login using Google service
- * https://laravel.com/docs/8.x/socialite
- */
 Route::get('/auth/redirect/{provider}', [SocialiteLoginController::class, 'redirect']);
 
 require __DIR__ . '/auth.php';

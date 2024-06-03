@@ -33,6 +33,9 @@
                 </div>
             @endif
 
+            <div id="success-message" class="alert alert-success d-none"></div>
+            <div id="error-message" class="alert alert-danger d-none"></div>
+
             <!--begin::Form Kode Barang-->
             <div class="form-group row mb-3 d-flex align-items-center">
                 <label for="kode" class="col-lg-2 control-label mb-1">Kode Barang</label>
@@ -215,7 +218,13 @@
                                             <form action="{{ route('cashier.addCart') }}" method="post">
                                                 @csrf
                                                 <input type="hidden" name="kode" value="{{ $item->kode }}">
-                                                <button type="submit" class="btn btn-sm btn-primary">Pilih</button>
+                                                @if ($item->stok <= 0)
+                                                    <button type="button" class="btn btn-sm btn-secondary">Stok
+                                                        Habis</button>
+                                                @else
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-primary">Pilih</button>
+                                                @endif
                                             </form>
                                         </td>
                                     </tr>
@@ -283,8 +292,50 @@
             @endif
 
             function onScanSuccess(decodedText, decodedResult) {
-                console.log(`Code matched = ${decodedText}`, decodedResult);
+                $.ajax({
+                    type: "post",
+                    url: "/cashier/add-cart",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "kode": decodedText
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            sessionStorage.setItem('successMessage', response.success);
+                        } else if (response.error) {
+                            sessionStorage.setItem('errorMessage', response.error);
+                        }
+                        location.reload();
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        if (xhr.status === 422) {
+                            var errorResponse = JSON.parse(xhr.responseText);
+                            if (errorResponse.error) {
+                                sessionStorage.setItem('errorMessage', errorResponse.error);
+                            }
+                        } else {
+                            sessionStorage.setItem('errorMessage', "An error occurred: " + textStatus);
+                        }
+                        location.reload();
+                    }
+                });
             }
+
+            $(document).ready(function() {
+                var successMessage = sessionStorage.getItem('successMessage');
+                var errorMessage = sessionStorage.getItem('errorMessage');
+
+                if (successMessage) {
+                    $("#success-message").text(successMessage).removeClass('d-none');
+                }
+
+                if (errorMessage) {
+                    $("#error-message").text(errorMessage).removeClass('d-none');
+                }
+
+                sessionStorage.removeItem('successMessage');
+                sessionStorage.removeItem('errorMessage');
+            });
 
             let config = {
                 fps: 10,
@@ -383,6 +434,7 @@
                                     subTotal.text(
                                         `Rp.${(productStok * response.detail_cashier.product.harga).toFixed(2)}`
                                     );
+                                    addOrUpdate(itemId, productStok, satuan)
                                 } else {
                                     subTotal.text(`Rp.${response.detail_cashier.sub_total.toFixed(2)}`);
                                 }
@@ -416,8 +468,8 @@
                 if ($('#noReturn').val() != '') {
                     returnDatatable();
                 } else {
-                $("#total_return").val(0);
-                $('#returnProducts-table').DataTable({})
+                    $("#total_return").val(0);
+                    $('#returnProducts-table').DataTable({})
                 }
 
 
@@ -442,7 +494,7 @@
                             if ($("#total_return").val() == 0) {
                                 let total = $("#total").val();
                                 let totalBayar = parseInt(total) - parseInt(response.return.total);
-                                if(Math.sign(totalBayar) == 1){
+                                if (Math.sign(totalBayar) == 1) {
                                     $("#total").val(totalBayar);
                                 } else {
                                     $("#total").val(0);

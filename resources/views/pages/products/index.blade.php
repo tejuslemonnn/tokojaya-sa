@@ -13,11 +13,11 @@
                     </div>
                 @endcan
 
-                <div data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover" title="Cetak Barcode">
+                {{-- <div data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover" title="Cetak Barcode">
                     <button onclick="cetakBarcode()" class="btn btn-sm btn-primary fw-bolder">
                         Cetak Barcode
                     </button>
-                </div>
+                </div> --}}
             </div>
             <!--begin::Card body-->
             <div class="card-body pt-6">

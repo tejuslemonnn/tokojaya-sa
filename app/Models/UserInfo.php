@@ -14,7 +14,8 @@ class UserInfo extends Model
         'name',
         'phone',
         'address',
-        'user_id'
+        'user_id',
+        'shift'
     ];
     /**
      * Prepare proper error handling for url attribute
@@ -36,7 +37,7 @@ class UserInfo extends Model
         }
 
         // no avatar, return blank avatar
-        return asset(theme()->getMediaUrlPath().'avatars/blank.png');
+        return asset(theme()->getMediaUrlPath() . 'avatars/blank.png');
     }
 
     /**
