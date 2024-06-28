@@ -57,7 +57,29 @@
 
         <!--begin::Col-->
         <div class="col-xxl">
-            {{ theme()->getView('partials/widgets/dashboard/tables/products', ['class' => 'card-xxl-stretch mb-5 mb-xxl-8', 'products' => $products]) }}
+            {{ theme()->getView('partials/widgets/dashboard/tables/products', ['class' => 'card-xxl-stretch mb-5 mb-xxl-8', 'products' => $productsLowestStock]) }}
+        </div>
+        <!--end::Col-->
+    </div>
+    <!--end::Row-->
+
+    <!--begin::Row-->
+    <div class="row g-5 gx-xxl-8">
+        <!--begin::Col-->
+        {{-- <div class="col-xxl-4">
+            {{ theme()->getView('partials/widgets/mixed/_widget-5', array('class' => 'card-xxl-stretch mb-xl-3', 'chartColor' => 'success', 'chartHeight' => '150px')) }}
+        </div> --}}
+        <!--end::Col-->
+
+        <!--begin::Col-->
+        <div class="col-xxl">
+            {{ theme()->getView('partials/widgets/dashboard/tables/non-best-seller-products', ['class' => 'card-xxl-stretch mb-5 mb-xxl-8', 'products' => $productsNonBestSeller]) }}
+        </div>
+        <!--end::Col-->
+
+        <!--begin::Col-->
+        <div class="col-xxl">
+            {{ theme()->getView('partials/widgets/dashboard/tables/best-seller-products', ['class' => 'card-xxl-stretch mb-5 mb-xxl-8', 'products' => $productsBestSeller]) }}
         </div>
         <!--end::Col-->
     </div>

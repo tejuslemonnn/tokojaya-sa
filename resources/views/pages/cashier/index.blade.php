@@ -87,8 +87,7 @@
                                     <div class="col-8">
                                         <input type="number" min="0" id="total"
                                             class="form-control bg-secondary" readonly
-                                            value="{{ !empty($cashier) ? $cashier->total_bayar : 0 }}.00"
-                                            name="total">
+                                            value="{{ !empty($cashier) ? $cashier->total_bayar : 0 }}" name="total">
                                     </div>
                                 </div>
                                 <div class="form-group row text-center mb-3">
@@ -395,11 +394,20 @@
                 });
 
                 $('#cetakStrukButton').click(async function(e) {
-                    var isConfirmed = confirm("Apakah anda yakin ingin mencetak pesanan?");
+                    if (parseInt($('#total_return').val()) > parseInt($('#total').val())) {
 
-                    if (isConfirmed) {
-                        $('#cetakStrukForm').submit();
+                        alert(
+                            `Total harga belum mencapai Total Return`
+                        )
+                    } else {
+                        var isConfirmed = confirm("Apakah anda yakin ingin mencetak pesanan?");
+
+                        if (isConfirmed) {
+                            $('#cetakStrukForm').submit();
+                        }
                     }
+
+
                 });
 
                 $('#batalPesananBtn').on('click', function(e) {
@@ -459,7 +467,8 @@
                 $('#bayar').keyup(function(e) {
                     var changedValue = $(this).val();
                     var total = $('#total').val();
-                    $('#kembali').val(changedValue - total);
+                    var totalReturn = $('#total_return').val();
+                    $('#kembali').val(changedValue - (total - totalReturn));
                 });
 
                 /* end::cashier */
@@ -491,15 +500,15 @@
                             // $('#error-message').remove();
                             $("#noReturnHidden").val(response.noReturn);
 
-                            if ($("#total_return").val() == 0) {
-                                let total = $("#total").val();
-                                let totalBayar = parseInt(total) - parseInt(response.return.total);
-                                if (Math.sign(totalBayar) == 1) {
-                                    $("#total").val(totalBayar);
-                                } else {
-                                    $("#total").val(0);
-                                }
-                            }
+                            // if ($("#total_return").val() == 0) {
+                            //     let total = $("#total").val();
+                            //     let totalBayar = parseInt(total) - parseInt(response.return.total);
+                            //     if (Math.sign(totalBayar) == 1) {
+                            //         $("#total").val(totalBayar);
+                            //     } else {
+                            //         $("#total").val(0);
+                            //     }
+                            // }
 
 
                             if ($("#total").val() != $("kembali").val() && $("#total_return").val() == 0) {
@@ -584,7 +593,8 @@
                             var totalCell = $('#total');
                             totalCell.val(response.total.toFixed(2));
                             var bayar = $('#bayar').val();
-                            $('#kembali').val(bayar - response.total);
+                            var totalReturn = $('#total_return').val();
+                            $('#kembali').val(bayar - (response.total - totalReturn));
                             resolve(response);
                         },
                         error: function(error) {

@@ -143,9 +143,9 @@ class ReturnProductController extends Controller
                     'sub_total' => $subTotal,
                 ]);
 
-                $product->update([
-                    'stok' => $product->stok - convertUnit($product->satuan->nama, $request->satuan[$key], $request->jumlah[$key]),
-                ]);
+                // $product->update([
+                //     'stok' => $product->stok - convertUnit($product->satuan->nama, $request->satuan[$key], $request->jumlah[$key]),
+                // ]);
 
                 $total += $subTotal;
             }

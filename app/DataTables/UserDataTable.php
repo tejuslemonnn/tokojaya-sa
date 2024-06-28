@@ -80,8 +80,8 @@ class UserDataTable extends DataTable
                 'user_infos.shift as shift_kerja',
                 'users.username',
                 'users.created_at',
-                'user_infos.address',
-                'user_infos.phone',
+                'user_infos.address as address',
+                'user_infos.phone as phone',
                 DB::raw('GROUP_CONCAT(DISTINCT roles.name) as role'),
                 DB::raw('GROUP_CONCAT(DISTINCT permissions.name) as permissions')
             )

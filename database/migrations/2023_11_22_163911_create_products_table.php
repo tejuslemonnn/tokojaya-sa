@@ -25,6 +25,7 @@ class CreateProductsTable extends Migration
             $table->integer('harga');
             $table->float('stok');
             $table->tinyInteger('diskon')->default(0);
+            $table->float('terjual')->default(0);
             $table->timestamps();
         });
     }

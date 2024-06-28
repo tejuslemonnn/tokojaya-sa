@@ -67,11 +67,11 @@ class CashierController extends Controller
                 ]);
 
                 $product = Product::find($value->product_id);
-                $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
+                // $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
 
-                $product->update([
-                    'stok' => $stok
-                ]);
+                //     $product->update([
+                //         'stok' => $stok
+                //     ]);
             }
         }
 
@@ -87,9 +87,11 @@ class CashierController extends Controller
 
             $product = Product::find($value->product_id);
             $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
+            $terjual = $product->terjual + convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
 
             $product->update([
-                'stok' => $stok
+                'stok' => $stok,
+                'terjual' => $terjual
             ]);
         }
 

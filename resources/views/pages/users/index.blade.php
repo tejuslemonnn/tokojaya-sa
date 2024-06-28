@@ -5,11 +5,11 @@
         @can('manage account')
             <div class="card-header pt-6 d-flex justify-content-end">
                 <div class="me-3">
-                        <select id="shiftFilter" class="form-select" name="shift">
-                            <option value="" selected>All Shifts</option>
-                            <option value="1">Shift Pagi</option>
-                            <option value="2">Shift Malam</option>
-                        </select>
+                    <select id="shiftFilter" class="form-select" name="shift">
+                        <option value="" selected>All Shifts</option>
+                        <option value="1">Shift Pagi</option>
+                        <option value="2">Shift Malam</option>
+                    </select>
                 </div>
 
                 <div data-bs-toggle="tooltip" data-bs-placement="left" data-bs-trigger="hover" title="Tambahkan User">
@@ -73,7 +73,8 @@
                         },
                         {
                             data: 'shift_kerja',
-                            name: 'shift_kerja'
+                            name: 'shift_kerja',
+                            searchable: false
                         },
                         {
                             data: 'username',
@@ -81,19 +82,23 @@
                         },
                         {
                             data: 'role',
-                            name: 'role'
+                            name: 'role',
+                            searchable: false
                         },
                         {
                             data: 'permissions',
-                            name: 'permissions'
+                            name: 'permissions',
+                            searchable: false
                         },
                         {
                             data: 'phone',
-                            name: 'phone'
+                            name: 'phone',
+                            searchable: false
                         },
                         {
                             data: 'address',
-                            name: 'address'
+                            name: 'address',
+                            searchable: false
                         },
                         {
                             data: 'created_at',
