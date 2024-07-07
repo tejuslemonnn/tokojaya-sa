@@ -196,13 +196,12 @@
                             name: 'no_laporan'
                         },
                         {
-                            data: 'user_id',
-                            name: 'user_id'
+                            data: 'kasir',
+                            name: 'kasir'
                         },
                         {
                             data: 'shift_kerja',
                             name: 'shift_kerja',
-                            searchable: false
                         },
                         {
                             data: 'total',

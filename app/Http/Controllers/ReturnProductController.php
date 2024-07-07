@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use App\DataTables\ReturnProductDataTable;
+use App\Models\PromoBundle;
 
 class ReturnProductController extends Controller
 {
@@ -57,14 +58,26 @@ class ReturnProductController extends Controller
             ], 404);
         }
 
-        $datatable = DataTables::eloquent(LaporanProducts::query()->join('products', 'laporan_products.product_id', '=', 'products.id')
+        $datatable = DataTables::eloquent(LaporanProducts::query()
+            ->leftJoin('products', function ($join) use ($laporan) {
+                $join->on('laporan_products.product_id', '=', 'products.id');
+            })
+            ->leftJoin('promo_bundles', function ($join) use ($laporan) {
+                $join->on('laporan_products.promo_bundle_id', '=', 'promo_bundles.id')
+                    ->whereNull('laporan_products.product_id');
+            })
             ->where('laporan_products.laporan_id', $laporan->id)
             ->select([
                 'laporan_products.*',
                 'products.nama_produk',
+                'promo_bundles.nama_bundel',
             ]))
             ->editColumn('nama_produk', function (LaporanProducts $item) {
-                return $item->product->nama_produk;
+                if ($item->product_id) {
+                    return $item->product->nama_produk;
+                } else {
+                    return $item->promoBundle->nama_bundel;
+                }
             })
             ->editColumn('jumlah', function (LaporanProducts $item) {
                 return $item->jumlah;
@@ -76,9 +89,17 @@ class ReturnProductController extends Controller
                 return 'Rp.' . convertRupiah($item->sub_total);
             })
             ->editColumn('qty', function (LaporanProducts $item) {
-                return '<input type="number" name="jumlah[]" class="form-control input-sm quantity" data-item-id="' . $item->id . '" data-kategori="' . $item->product->kategori_id . '" data-harga="' . $item->product->harga . '" value="' . 0 . '" min="0" max="' . $item->jumlah . '" size="3">'
-                    . '<input type="hidden" name="product_id[]" value="' . $item->product_id  . '">'
-                    . '<input type="hidden" name="satuan[]" value="' . $item->satuan  . '">';
+
+                if ($item->product_id) {
+                    return '<input type="number" name="jumlah[]" class="form-control input-sm quantity" data-item-id="' . $item->id . '" data-kategori="' . $item->product->kategori_id . '" data-harga="' . $item->product->harga . '" value="' . 0 . '" min="0" max="' . $item->jumlah . '" size="3">'
+                        . '<input type="hidden" name="product_id[]" value="' . $item->product_id  . '">'
+                        . '<input type="hidden" name="satuan[]" value="' . $item->satuan  . '">'
+                        . '<input type="hidden" name="tipe[]" value="product">';
+                } else {
+                    return '<input type="number" name="jumlah[]" class="form-control input-sm quantity" data-item-id="' . $item->id . '" data-harga="' . $item->promoBundle->harga_promo . '" value="' . 0 . '" min="0" max="' . $item->jumlah . '" size="3">'
+                        . '<input type="hidden" name="product_id[]" value="' . $item->promo_bundle_id  . '">'
+                        . '<input type="hidden" name="tipe[]" value="promoBundle">';
+                }
             })
             ->rawColumns(['qty'])
             ->toJson();
@@ -118,36 +139,56 @@ class ReturnProductController extends Controller
 
         foreach ($request->product_id as $key => $product_id) {
             if ($request->jumlah[$key] > 0) {
-                $product = Product::find($product_id);
+                if ($request->tipe[$key] === 'product') {
+                    $product = Product::find($product_id);
 
-                $reqSatuan = $request->satuan[$key];
-                $productSatuan = $product->satuan->nama;
+                    $reqSatuan = $request->satuan[$key];
+                    $productSatuan = $product->satuan->nama;
 
-                $subTotal = 0;
+                    $subTotal = 0;
 
-                if (strtolower(substr($productSatuan, 0, 1)) == 'k' && strtolower(substr($productSatuan, 1, 2)) == $reqSatuan) {
-                    $jumlah = $request->jumlah[$key] / 1000;
-                    $subTotal = $product->harga *  $jumlah - ($product->harga *  $jumlah * $product->diskon / 100);
-                } else  if (strtolower(substr($productSatuan, 0, 1)) == 'l' && strtolower(substr($reqSatuan, 1, 2)) == strtolower($productSatuan)) {
-                    $jumlah = $request->jumlah[$key] / 1000;
-                    $subTotal = $product->harga *  $jumlah - ($product->harga *  $jumlah * $product->diskon / 100);
+                    if (strtolower(substr($productSatuan, 0, 1)) == 'k' && strtolower(substr($productSatuan, 1, 2)) == $reqSatuan) {
+                        $jumlah = $request->jumlah[$key] / 1000;
+                        $subTotal = $product->harga *  $jumlah - ($product->harga *  $jumlah * $product->diskon / 100);
+                    } else  if (strtolower(substr($productSatuan, 0, 1)) == 'l' && strtolower(substr($reqSatuan, 1, 2)) == strtolower($productSatuan)) {
+                        $jumlah = $request->jumlah[$key] / 1000;
+                        $subTotal = $product->harga *  $jumlah - ($product->harga *  $jumlah * $product->diskon / 100);
+                    } else {
+                        $subTotal = $product->harga *  $request->jumlah[$key] - ($product->harga *  $request->jumlah[$key] * $product->diskon / 100);
+                    }
+
+                    ReturnProduct::create([
+                        'return_penjualan_id' => $returnPenjualan->id,
+                        'product_id' => $product_id,
+                        'jumlah' => $request->jumlah[$key],
+                        'satuan' => $request->satuan[$key],
+                        'sub_total' => $subTotal,
+                    ]);
+
+                    // $product->update([
+                    //     'stok' => $product->stok - convertUnit($product->satuan->nama, $request->satuan[$key], $request->jumlah[$key]),
+                    // ]);
+
+                    $total += $subTotal;
                 } else {
-                    $subTotal = $product->harga *  $request->jumlah[$key] - ($product->harga *  $request->jumlah[$key] * $product->diskon / 100);
+                    $promoBundle = PromoBundle::find($product_id);
+
+                    $subTotal = $promoBundle->harga_promo *  $request->jumlah[$key];
+
+                    ReturnProduct::create([
+                        'return_penjualan_id' => $returnPenjualan->id,
+                        'promo_bundle_id' => $product_id,
+                        'jumlah' => $request->jumlah[$key],
+                        'satuan' => 'pcs',
+                        'sub_total' => $subTotal,
+                    ]);
+
+                    // $product->update([
+                    //     'stok' => $product->stok - convertUnit($product->satuan->nama, $request->satuan[$key], $request->jumlah[$key]),
+                    // ]);
+
+                    $total += $subTotal;
                 }
-
-                ReturnProduct::create([
-                    'return_penjualan_id' => $returnPenjualan->id,
-                    'product_id' => $product_id,
-                    'jumlah' => $request->jumlah[$key],
-                    'satuan' => $request->satuan[$key],
-                    'sub_total' => $subTotal,
-                ]);
-
-                // $product->update([
-                //     'stok' => $product->stok - convertUnit($product->satuan->nama, $request->satuan[$key], $request->jumlah[$key]),
-                // ]);
-
-                $total += $subTotal;
             }
         }
 

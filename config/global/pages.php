@@ -116,6 +116,20 @@ return array(
         ),
     ),
 
+    'promo-bundle' => array(
+        'title'  => 'Promo Bundles',
+        'assets' => array(
+            'custom' => array(
+                'css' => array(
+                    'plugins/custom/datatables/datatables.bundle.css',
+                ),
+                'js'  => array(
+                    'plugins/custom/datatables/datatables.bundle.js',
+                ),
+            ),
+        ),
+    ),
+
     'categories' => array(
         'title'  => 'Categories',
         'assets' => array(

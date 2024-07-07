@@ -13,6 +13,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\DataTables\CashierDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\LaporanProductReturns;
+use App\Models\PromoBundle;
 use App\Models\ReturnPenjualan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -23,7 +24,8 @@ class CashierController extends Controller
     {
         $products = Product::all();
         $cashier = Cashier::where('user_id', auth()->user()->id)->first();
-        return $datatable->render('pages.cashier.index', compact('products', 'cashier'));
+        $promoBundle = PromoBundle::with('promoBundleItems')->get();
+        return $datatable->render('pages.cashier.index', compact('products', 'cashier', 'promoBundle'));
     }
 
     public function cetakStruk(Request $request)
@@ -61,12 +63,13 @@ class CashierController extends Controller
                 LaporanProductReturns::create([
                     'laporan_id' => $laporan->id,
                     'product_id' => $value->product_id,
+                    'promo_bundle_id' => $value->promo_bundle_id,
                     'jumlah' => $value->jumlah,
                     'satuan' => $value->satuan,
                     'sub_total' => $value->sub_total,
                 ]);
 
-                $product = Product::find($value->product_id);
+                // $product = Product::find($value->product_id);
                 // $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
 
                 //     $product->update([
@@ -80,19 +83,34 @@ class CashierController extends Controller
             LaporanProducts::create([
                 'laporan_id' => $laporan->id,
                 'product_id' => $value->product_id,
+                'promo_bundle_id' => $value->promo_bundle_id,
                 'jumlah' => $value->jumlah,
                 'satuan' => $value->satuan,
                 'sub_total' => $value->sub_total
             ]);
 
-            $product = Product::find($value->product_id);
-            $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
-            $terjual = $product->terjual + convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
+            if ($value->product_id) {
+                $product = Product::find($value->product_id);
+                $stok = $product->stok - convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
+                $terjual = $product->terjual + convertUnit($product->satuan->nama, $value->satuan, $value->jumlah);
 
-            $product->update([
-                'stok' => $stok,
-                'terjual' => $terjual
-            ]);
+                $product->update([
+                    'stok' => $stok,
+                    'terjual' => $terjual
+                ]);
+            } else {
+                $promoProducts = $value->promoBundle->promoBundleItems;
+
+                foreach ($promoProducts as $key => $promoProduct) {
+                    $stok = $promoProduct->product->stok - convertUnit($promoProduct->product->satuan->nama, $promoProduct->product->satuan->nama, $promoProduct->product->qty);
+                    $terjual = $promoProduct->product->terjual + convertUnit($promoProduct->product->satuan->nama, $promoProduct->product->satuan->nama, $promoProduct->qty);
+
+                    $promoProduct->product->update([
+                        'stok' => $stok,
+                        'terjual' => $terjual
+                    ]);
+                }
+            }
         }
 
         $cashier->delete();
@@ -113,42 +131,82 @@ class CashierController extends Controller
             ]);
         }
 
-        $product = Product::where('kode', $request->kode)->first();
+        if ($request->tipe === 'product') {
+            $product = Product::where('kode', $request->kode)->first();
 
-        if (empty($product)) {
-            if ($request->ajax()) {
-                return response()->json(['error' => 'Produk Tidak Ada'], 422);
-            } else {
-                return redirect()->back()->with('error', 'Produk Tidak Ada');
+            if (empty($product)) {
+                if ($request->ajax()) {
+                    return response()->json(['error' => 'Produk Tidak Ada'], 422);
+                } else {
+                    return redirect()->back()->with('error', 'Produk Tidak Ada');
+                }
             }
-        }
 
-        if (!empty($cashier->detail_cashier)) {
-            foreach ($cashier->detail_cashier as $key => $value) {
-                if ($cashier->user_id == auth()->user()->id && $value->product->kode == $request->kode) {
-                    if ($request->ajax()) {
-                        return response()->json(['error' => 'Produk sudah Ada'], 422);
-                    } else {
-                        return redirect()->back()->with('error', 'Produk sudah Ada');
+            if (!empty($cashier->detail_cashier)) {
+                foreach ($cashier->detail_cashier as $key => $value) {
+                    if ($cashier->user_id == auth()->user()->id && $value->product && $value->product->kode == $request->kode) {
+                        dd($value->product);
+                        if ($request->ajax()) {
+                            return response()->json(['error' => 'Produk sudah Ada'], 422);
+                        } else {
+                            return redirect()->back()->with('error', 'Produk sudah Ada');
+                        }
                     }
                 }
             }
+
+            $detailCashier = DetailCashier::create([
+                'cashier_id' => $cashier->id,
+                'product_id' => $product->id,
+                'jumlah' => 1,
+                'sub_total' => $product->harga * 1 - ($product->harga * 1 * $product->diskon / 100),
+                'kategori' => $product->category->nama,
+                'satuan' => $product->satuan->nama,
+            ]);
+
+            $cashier->update([
+                'total_bayar' => $cashier->total_bayar += $detailCashier->sub_total
+            ]);
+
+            $cashier->save();
+        } else {
+            $promoBundle = PromoBundle::where('kode_barcode', $request->kode_barcode)->first();
+
+            if (empty($promoBundle)) {
+                if ($request->ajax()) {
+                    return response()->json(['error' => 'Produk Tidak Ada'], 422);
+                } else {
+                    return redirect()->back()->with('error', 'Produk Tidak Ada');
+                }
+            }
+
+            if (!empty($cashier->detail_cashier)) {
+                foreach ($cashier->detail_cashier as $key => $value) {
+                    if ($cashier->user_id == auth()->user()->id && $value->promoBundle && $value->promoBundle->kode_barcode == $request->kode_barcode) {
+                        if ($request->ajax()) {
+                            return response()->json(['error' => 'Promo Bundle sudah Ada'], 422);
+                        } else {
+                            return redirect()->back()->with('error', 'Promo Bundle sudah Ada');
+                        }
+                    }
+                }
+            }
+
+            $detailCashier = DetailCashier::create([
+                'cashier_id' => $cashier->id,
+                'promo_bundle_id' => $promoBundle->id,
+                'jumlah' => 1,
+                'sub_total' => $promoBundle->harga_promo * 1,
+                'kategori' => 'promo-bundle',
+                'satuan' => 'pcs',
+            ]);
+
+            $cashier->update([
+                'total_bayar' => $cashier->total_bayar += $detailCashier->sub_total
+            ]);
         }
 
-        $detailCashier = DetailCashier::create([
-            'cashier_id' => $cashier->id,
-            'product_id' => $product->id,
-            'jumlah' => 1,
-            'sub_total' => $product->harga * 1 - ($product->harga * 1 * $product->diskon / 100),
-            'kategori' => $product->category->nama,
-            'satuan' => $product->satuan->nama,
-        ]);
 
-        $cashier->update([
-            'total_bayar' => $cashier->total_bayar += $detailCashier->sub_total
-        ]);
-
-        $cashier->save();
 
         if ($request->ajax()) {
             return response()->json(['success' => 'Produk berhasil ditambahkan!']);
@@ -195,25 +253,32 @@ class CashierController extends Controller
     {
         $detailCashier = DetailCashier::find($request->id);
 
-        $subTotal = 0;
+        if ($detailCashier->product) {
+            $subTotal = 0;
 
-        $reqSatuan = $request->satuan;
-        $productSatuan = $detailCashier->product->satuan->nama;
+            $reqSatuan = $request->satuan;
+            $productSatuan = $detailCashier->product->satuan->nama;
 
-        if (strtolower(substr($productSatuan, 0, 1)) == 'k' && strtolower(substr($productSatuan, 1, 2)) == $reqSatuan) {
-            $jumlah = $request->jumlah / 1000;
-            $subTotal = $detailCashier->product->harga *  $jumlah - ($detailCashier->product->harga *  $jumlah * $detailCashier->product->diskon / 100);
-        } else  if (strtolower(substr($productSatuan, 0, 1)) == 'l' && strtolower(substr($reqSatuan, 1, 2)) == strtolower($productSatuan)) {
-            $jumlah = $request->jumlah / 1000;
-            $subTotal = $detailCashier->product->harga *  $jumlah - ($detailCashier->product->harga *  $jumlah * $detailCashier->product->diskon / 100);
+            if (strtolower(substr($productSatuan, 0, 1)) == 'k' && strtolower(substr($productSatuan, 1, 2)) == $reqSatuan) {
+                $jumlah = $request->jumlah / 1000;
+                $subTotal = $detailCashier->product->harga *  $jumlah - ($detailCashier->product->harga *  $jumlah * $detailCashier->product->diskon / 100);
+            } else  if (strtolower(substr($productSatuan, 0, 1)) == 'l' && strtolower(substr($reqSatuan, 1, 2)) == strtolower($productSatuan)) {
+                $jumlah = $request->jumlah / 1000;
+                $subTotal = $detailCashier->product->harga *  $jumlah - ($detailCashier->product->harga *  $jumlah * $detailCashier->product->diskon / 100);
+            } else {
+                $subTotal = $detailCashier->product->harga *  $request->jumlah - ($detailCashier->product->harga *  $request->jumlah * $detailCashier->product->diskon / 100);
+            }
+
+            $detailCashier->update([
+                'jumlah' => $request->jumlah,
+                'sub_total' => $subTotal
+            ]);
         } else {
-            $subTotal = $detailCashier->product->harga *  $request->jumlah - ($detailCashier->product->harga *  $request->jumlah * $detailCashier->product->diskon / 100);
+            $detailCashier->update([
+                'jumlah' => $request->jumlah,
+                'sub_total' => $detailCashier->promoBundle->harga_promo * $request->jumlah
+            ]);
         }
-
-        $detailCashier->update([
-            'jumlah' => $request->jumlah,
-            'sub_total' => $subTotal
-        ]);
 
         $cashier = Cashier::where('user_id', auth()->user()->id)->first();
 

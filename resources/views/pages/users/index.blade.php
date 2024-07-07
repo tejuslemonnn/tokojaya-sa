@@ -74,7 +74,6 @@
                         {
                             data: 'shift_kerja',
                             name: 'shift_kerja',
-                            searchable: false
                         },
                         {
                             data: 'username',
@@ -83,22 +82,18 @@
                         {
                             data: 'role',
                             name: 'role',
-                            searchable: false
                         },
                         {
                             data: 'permissions',
                             name: 'permissions',
-                            searchable: false
                         },
                         {
                             data: 'phone',
                             name: 'phone',
-                            searchable: false
                         },
                         {
                             data: 'address',
                             name: 'address',
-                            searchable: false
                         },
                         {
                             data: 'created_at',

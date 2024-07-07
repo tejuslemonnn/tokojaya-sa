@@ -24,7 +24,11 @@ class ReturnProductDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->editColumn('nama_produk', function (ReturnProduct $model) {
-                return $model->product->nama_produk;
+                if ($model->product_id) {
+                    return $model->product->nama_produk;
+                } else {
+                    return $model->promoBundle->nama_bundel;
+                }
             })
             ->editColumn('jumlah', function (ReturnProduct $model) {
                 return $model->jumlah;
@@ -35,7 +39,7 @@ class ReturnProductDataTable extends DataTable
             ->editColumn('sub_total', function (ReturnProduct $model) {
                 return $model->sub_total;
             });
-            // ->addColumn('action', 'returnproduct.action');
+        // ->addColumn('action', 'returnproduct.action');
     }
 
     /**
@@ -50,11 +54,17 @@ class ReturnProductDataTable extends DataTable
         $return = ReturnPenjualan::where('no_return', $noReturn)->first();
 
         return $model->newQuery()
-            ->join('products', 'return_products.product_id', '=', 'products.id')
-            ->where('return_products.return_penjualan_id', $return->id)
+            ->leftJoin('products', function ($join) use ($model) {
+                $join->on('return_products.product_id', '=', 'products.id');
+            })
+            ->leftJoin('promo_bundles', function ($join) use ($model) {
+                $join->on('return_products.promo_bundle_id', '=', 'promo_bundles.id')
+                    ->whereNull('return_products.product_id');
+            })->where('return_products.return_penjualan_id', $return->id)
             ->select([
                 'return_products.*',
                 'products.nama_produk',
+                'promo_bundles.nama_bundel',
             ]);
     }
 

@@ -108,14 +108,25 @@ class LaporanController extends Controller
     {
         $laporan = Laporan::where('no_laporan', $request->no_laporan)->first();
         $datatable = DataTables::eloquent(LaporanProductReturns::query()
-            ->join('products', 'laporan_product_returns.product_id', '=', 'products.id')
+            ->leftJoin('products', function ($join) use ($laporan) {
+                $join->on('laporan_product_returns.product_id', '=', 'products.id');
+            })
+            ->leftJoin('promo_bundles', function ($join) use ($laporan) {
+                $join->on('laporan_product_returns.promo_bundle_id', '=', 'promo_bundles.id')
+                    ->whereNull('laporan_product_returns.product_id');
+            })
             ->where('laporan_product_returns.laporan_id', $laporan->id)
             ->select([
                 'laporan_product_returns.*',
                 'products.nama_produk',
+                'promo_bundles.nama_bundel',
             ]))
             ->editColumn('nama_produk', function (LaporanProductReturns $item) {
-                return $item->product->nama_produk;
+                if ($item->product_id) {
+                    return $item->product->nama_produk;
+                } else {
+                    return $item->promoBundle->nama_bundel;
+                }
             })
             ->editColumn('jumlah', function (LaporanProductReturns $item) {
                 return $item->jumlah;
@@ -123,7 +134,7 @@ class LaporanController extends Controller
             ->editColumn('satuan', function (LaporanProductReturns $item) {
                 return $item->satuan;
             })
-            ->toJson(); 
+            ->toJson();
 
         return $datatable;
     }

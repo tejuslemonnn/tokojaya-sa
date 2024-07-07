@@ -24,8 +24,18 @@ class LaporanProductsDataTable extends DataTable
     {
         $dataTable = datatables()
             ->eloquent($query)
+            ->filterColumn('nama_produk', function ($query, $keyword) {
+                $query->where(function ($subquery) use ($keyword) {
+                    $subquery->whereRaw('LOWER(products.nama_produk) like ?', ["%{$keyword}%"])
+                        ->orWhereRaw('LOWER(promo_bundles.nama_bundel) like ?', ["%{$keyword}%"]);
+                });
+            })
             ->editColumn('nama_produk', function (LaporanProducts $item) {
-                return $item->product->nama_produk;
+                if ($item->product_id) {
+                    return $item->product->nama_produk;
+                } else {
+                    return $item->promoBundle->nama_bundel;
+                }
             })
             ->editColumn('jumlah', function (LaporanProducts $item) {
                 return $item->jumlah;
@@ -52,12 +62,21 @@ class LaporanProductsDataTable extends DataTable
 
         $laporan = Laporan::where('no_laporan', $noLaporan)->first();
 
+        // Use left join for optional product or promo_bundle relationship
         return $model->newQuery()
-            ->join('products', 'laporan_products.product_id', '=', 'products.id')
+            ->leftJoin('promo_bundles', function ($join) use ($model) {
+                $join->on('laporan_products.promo_bundle_id', '=', 'promo_bundles.id')
+                    ->whereNull('laporan_products.product_id');
+            })
+            ->leftJoin('products', function ($join) use ($model) {
+                $join->on('laporan_products.product_id', '=', 'products.id')
+                    ->whereNotNull('laporan_products.product_id');
+            })
             ->where('laporan_products.laporan_id', $laporan->id)
             ->select([
                 'laporan_products.*',
                 'products.nama_produk',
+                'promo_bundles.nama_bundel',
             ]);
     }
 
@@ -88,7 +107,6 @@ class LaporanProductsDataTable extends DataTable
     protected function getColumns()
     {
         $columns = [
-            Column::make('id'),
             Column::make('nama_produk'),
             Column::make('jumlah'),
             Column::make('satuan'),

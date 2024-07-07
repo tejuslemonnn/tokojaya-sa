@@ -14,6 +14,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\PromoBundleController;
 use App\Http\Controllers\ReturnProductController;
 use App\Http\Controllers\SatuanController;
 
@@ -78,9 +79,11 @@ Route::middleware('auth')->group(function () {
 
     Route::group(['middleware' => ['permission:manage shop']], function () {
         Route::resource('products', ProductsController::class);
+        Route::resource('promo-bundle', PromoBundleController::class);
     });
 
     Route::resource('products', ProductsController::class)->only('index', 'show');
+    Route::resource('promo-bundle', PromoBundleController::class)->only('index', 'show');
     Route::post('products/cetak-barcode', [ProductsController::class, 'cetakBarcode'])->name('products.cetak-barcode');
 
     Route::group(['middleware' => ['permission:manage sale']], function () {

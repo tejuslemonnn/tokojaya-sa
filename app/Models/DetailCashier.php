@@ -13,6 +13,11 @@ class DetailCashier extends Model
 
     public function product()
     {
-        return $this->hasOne(Product::class, 'id', 'product_id'); 
+        return $this->hasOne(Product::class, 'id', 'product_id');
+    }
+
+    public function promoBundle()
+    {
+        return $this->hasOne(PromoBundle::class, 'id', 'promo_bundle_id');
     }
 }

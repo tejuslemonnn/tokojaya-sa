@@ -23,13 +23,25 @@ class CashierDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->editColumn('kode', function (DetailCashier $item) {
-                return $item->product->kode;
+                if ($item->product_id) {
+                    return $item->product->kode;
+                } else {
+                    return $item->promoBundle->kode_barcode;
+                }
             })
             ->editColumn('nama_produk', function (DetailCashier $item) {
-                return $item->product->nama_produk;
+                if ($item->product_id) {
+                    return $item->product->nama_produk;
+                } else {
+                    return $item->promoBundle->nama_bundel;
+                }
             })
             ->editColumn('jumlah', function (DetailCashier $item) {
-                return '<input type="number" name="jumlah" class="form-control input-sm quantity" data-item-id="' . $item->id . '" data-kategori="' . $item->product->kategori_id . '" data-harga="' . $item->product->harga . '" value="' . $item->jumlah . '" min="0" ' . "max=" . $item->product->stok . ' size="3"' . '>';
+                if ($item->product_id) {
+                    return '<input type="number" name="jumlah" class="form-control input-sm quantity" data-item-id="' . $item->id   . '" data-harga="' . $item->product->harga . '" value="' . $item->jumlah . '" min="0" ' . "max=" . $item->product->stok . ' size="3"' . '>';
+                } else {
+                    return '<input type="number" name="jumlah" class="form-control input-sm quantity" data-item-id="' . $item->id   . '" data-harga="' . $item->promoBundle->harga_promo . '" value="' . $item->jumlah . '" min="0" ' . ' size="3"' . '>';
+                }
             })
             // ->editColumn('kategori', function (DetailCashier $item) {
             //     return $item->kategori;
@@ -39,20 +51,32 @@ class CashierDataTable extends DataTable
                 return view('pages.cashier.select', compact('satuans', 'item'));
             })
             ->editColumn('harga', function (DetailCashier $item) {
-                return $item->product->harga;
+                if ($item->product_id) {
+                    return "Rp." . convertRupiah($item->product->harga);
+                } else {
+                    return "Rp." . convertRupiah($item->promoBundle->harga_promo);
+                }
             })
             ->editColumn('diskon', function (DetailCashier $item) {
-                return $item->product->diskon . ' %';
+                if ($item->product_id) {
+                    return $item->product->diskon . ' %';
+                } else {
+                    return '<span style="text-decoration: line-through;">' . "Rp." . convertRupiah($item->promoBundle->harga_asli) . '</span>';
+                }
             })
             ->editColumn('subTotal', function (DetailCashier $item) {
-                return '<p class="subTotal" data-item-id=' . $item->product->id . '>' .  'Rp.' .  number_format($item->sub_total, 0, ',', '.') . '</p>';
+                if ($item->product_id) {
+                    return '<span class="subTotal" data-item-id=' . $item->product->id . '>' .  'Rp.' .  number_format($item->sub_total, 0, ',', '.') . '</span>';
+                } else {
+                    return '<span class="subTotal" data-item-id=' . $item->promoBundle->id . '>' .  'Rp.' .  number_format($item->sub_total, 0, ',', '.') . '</span>';
+                }
             })
             ->addColumn('action', function (DetailCashier $item) {
                 return view('pages.cashier._action-menu', [
                     'item' => $item
                 ]);
             })
-            ->rawColumns(['jumlah', 'subTotal']);
+            ->rawColumns(['jumlah', 'subTotal', 'diskon']);
     }
 
     /**

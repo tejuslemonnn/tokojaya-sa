@@ -22,10 +22,16 @@ class LaporanDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
+            ->filterColumn('shift_kerja', function ($query, $keyword) {
+                $query->whereRaw('LOWER(user_infos.shift) like ?', ["%{$keyword}%"]);
+            })
+            ->filterColumn('kasir', function ($query, $keyword) {
+                $query->whereRaw('LOWER(users.name) like ?', ["%{$keyword}%"]);
+            })
             ->editColumn('no_laporan', function (Laporan $model) {
                 return $model->no_laporan;
             })
-            ->editColumn('user_id', function (Laporan $model) {
+            ->editColumn('kasir', function (Laporan $model) {
                 return $model->kasir->name;
             })
             ->editColumn('shift_kerja', function (Laporan $model) {
@@ -57,9 +63,11 @@ class LaporanDataTable extends DataTable
     {
         return $model->newQuery()
             ->leftJoin('user_infos', 'laporans.user_id', '=', 'user_infos.user_id')
+            ->leftJoin('users', 'laporans.user_id', '=', 'users.id')
             ->select(
                 'laporans.*',
-                'user_infos.shift as shift_kerja'
+                'user_infos.shift as shift_kerja',
+                'users.name'
             )
             ->when(intval($this->shift), function ($query, $shift) {
                 return $query->where('user_infos.shift', $shift);
@@ -100,7 +108,7 @@ class LaporanDataTable extends DataTable
     {
         return [
             Column::make('no_laporan'),
-            Column::make('user_id')->title('Kasir'),
+            Column::make('kasir'),
             Column::make('shift_kerja'),
             Column::make('total'),
             Column::make('created_at')->title('Tanggal'),

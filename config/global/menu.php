@@ -318,6 +318,14 @@ return array(
             'permission' => ['manage shop', 'manage account']
         ),
 
+        // Promo Bundle
+        array(
+            'title' => 'Promo Bundle',
+            'icon'  => theme()->getSvgIcon("demo1/media/icons/duotune/ecommerce/ecm009.svg", "svg-icon-2"),
+            'path'  => 'promo-bundle',
+            'permission' => ['manage shop']
+        ),
+
         // Karyawan
         array(
             'title' => 'Users',

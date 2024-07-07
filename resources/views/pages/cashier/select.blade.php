@@ -17,7 +17,8 @@
             </option>
         @endif --}}
 
-        <option value="{{ $satuan->nama }}" {{ $item->satuan == $satuan->nama ? 'selected' : '' }}>
+        <option value="{{ $satuan->nama }}" {{ $item->satuan == $satuan->nama ? 'selected' : '' }}
+            @if ($item->promoBundle && $satuan->nama !== 'pcs') disabled @endif>
             {{ $satuan->nama }}
         </option>
     @endforeach

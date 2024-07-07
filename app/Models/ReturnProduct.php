@@ -11,7 +11,13 @@ class ReturnProduct extends Model
 
     protected $guarded = [];
 
-    public function product(){
-        return $this->belongsTo(Product::class);
+    public function product()
+    {
+        return $this->hasOne(Product::class, 'id', 'product_id');
+    }
+
+    public function promoBundle()
+    {
+        return $this->hasOne(PromoBundle::class, 'id', 'promo_bundle_id');
     }
 }

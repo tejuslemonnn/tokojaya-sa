@@ -103,11 +103,19 @@
             <div>Sub Total</div>
         </div>
         @foreach ($return->returnProducts as $key => $item)
-            <div class="flex-container" style="text-align: right;">
-                <div style="text-align: left;">{{ $item->product->nama_produk }}</div>
-                <div>{{ $item->jumlah }} {{ $item->satuan }}</div>
-                <div>Rp.{{ number_format($item->sub_total, 0, ',', '.') }}</div>
-            </div>
+            @if ($item->product)
+                <div class="flex-container" style="text-align: right;">
+                    <div style="text-align: left;">{{ $item->product->nama_produk }}</div>
+                    <div>{{ $item->jumlah }} {{ $item->satuan }}</div>
+                    <div>Rp.{{ number_format($item->sub_total, 0, ',', '.') }}</div>
+                </div>
+            @else
+                <div class="flex-container" style="text-align: right;">
+                    <div style="text-align: left;">{{ $item->promoBundle->nama_bundel }}</div>
+                    <div>{{ $item->jumlah }} {{ $item->satuan }}</div>
+                    <div>Rp.{{ number_format($item->sub_total, 0, ',', '.') }}</div>
+                </div>
+            @endif
             @if ($key != count($return->returnProducts) - 1)
                 <hr>
             @endif

@@ -13,7 +13,12 @@ class Cashier extends Model
 
     public function detail_cashier()
     {
-        return $this->hasMany(DetailCashier::class); 
+        return $this->hasMany(DetailCashier::class);
+    }
+
+    public function promoBundle()
+    {
+        return $this->hasOneThrough(PromoBundle::class, DetailCashier::class, 'cashier_id', 'id', 'id', 'promo_bundle_id');
     }
 
     public function product()

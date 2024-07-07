@@ -183,53 +183,156 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="productModalLabel">List Product</h1>
+                    <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-home" type="button" role="tab"
+                                aria-controls="pills-home" aria-selected="true">Produk</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-profile" type="button" role="tab"
+                                aria-controls="pills-profile" aria-selected="false">Promo Bundle</button>
+                        </li>
+                    </ul>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="productDataTable" class="productDataTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Kode</th>
-                                    <th>Nama Barang</th>
-                                    <th>Kategori</th>
-                                    <th>Satuan</th>
-                                    <th>Harga</th>
-                                    <th>Diskon</th>
-                                    <th>Stok</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($products as $key => $item)
-                                    <tr>
-                                        <td width="5%">{{ $key + 1 }}</td>
-                                        <td><span class="label label-success">{{ $item->kode }}</span></td>
-                                        <td>{{ $item->nama_produk }}</td>
-                                        <td>{{ $item->category->nama }}</td>
-                                        <td>{{ $item->satuan->nama }}</td>
-                                        <td>{{ $item->harga }}</td>
-                                        <td>{{ $item->diskon }} %</td>
-                                        <td>{{ $item->stok }}</td>
-                                        <td>
-                                            <form action="{{ route('cashier.addCart') }}" method="post">
-                                                @csrf
-                                                <input type="hidden" name="kode" value="{{ $item->kode }}">
-                                                @if ($item->stok <= 0)
-                                                    <button type="button" class="btn btn-sm btn-secondary">Stok
-                                                        Habis</button>
-                                                @else
-                                                    <button type="submit"
-                                                        class="btn btn-sm btn-primary">Pilih</button>
-                                                @endif
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                            aria-labelledby="pills-home-tab">
+                            <h1 class="modal-title fs-5" id="productModalLabel">List Produk</h1>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="productDataTable" class="productDataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Kode</th>
+                                            <th>Nama Barang</th>
+                                            <th>Kategori</th>
+                                            <th>Satuan</th>
+                                            <th>Harga</th>
+                                            <th>Diskon</th>
+                                            <th>Stok</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($products as $key => $item)
+                                            <tr>
+                                                <td width="5%">{{ $key + 1 }}</td>
+                                                <td><span class="label label-success">{{ $item->kode }}</span></td>
+                                                <td>{{ $item->nama_produk }}</td>
+                                                <td>{{ $item->category->nama }}</td>
+                                                <td>{{ $item->satuan->nama }}</td>
+                                                <td>{{ $item->harga }}</td>
+                                                <td>{{ $item->diskon }} %</td>
+                                                <td>{{ $item->stok }}</td>
+                                                <td>
+                                                    <form action="{{ route('cashier.addCart') }}" method="post">
+                                                        @csrf
+                                                        <input type="hidden" name="kode"
+                                                            value="{{ $item->kode }}">
+                                                        <input type="hidden" name="tipe" value="product">
+                                                        @if ($item->stok <= 0)
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-secondary">Stok
+                                                                Habis</button>
+                                                        @else
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-primary">Pilih</button>
+                                                        @endif
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel"
+                            aria-labelledby="pills-profile-tab">
+                            <h1 class="modal-title fs-5" id="productModalLabel">List Promo Bundle</h1>
+                            <div class="table-responsive">
+
+                                <table class="table table-bordered" id="productDataTable" class="productDataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Kode Barcode</th>
+                                            <th>Nama Bundel</th>
+                                            <th>Beli Produk</th>
+                                            <th>Gratis Produk</th>
+                                            <th>Mulai Berlaku</th>
+                                            <th>Selesai Berlaku</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($promoBundle as $key => $item)
+                                            <tr>
+                                                <td width="5%">{{ $key + 1 }}</td>
+                                                <td><span class="label label-success">{{ $item->kode_barcode }}</span>
+                                                </td>
+                                                <td>{{ $item->nama_bundel }}</td>
+                                                <td>
+                                                    <ul>
+                                                        @if ($item->promoBundleItems)
+                                                            @foreach ($item->promoBundleItems->where('tipe', 'Beli') as $bundleItem)
+                                                                <li>{{ $bundleItem->product->nama_produk }}
+                                                                    {{ $bundleItem->qty }}
+                                                                    {{ $bundleItem->product->satuan->nama }}</li>
+                                                            @endforeach
+                                                        @else
+                                                            <li>No items</li>
+                                                        @endif
+                                                    </ul>
+                                                </td>
+                                                <td>
+                                                    <ul>
+                                                        @if ($item->promoBundleItems)
+                                                            @foreach ($item->promoBundleItems->where('tipe', 'Gratis') as $bundleItem)
+                                                                <li>{{ $bundleItem->product->nama_produk }}
+                                                                    {{ $bundleItem->qty }}
+                                                                    {{ $bundleItem->product->satuan->nama }}</li>
+                                                            @endforeach
+                                                        @else
+                                                            <li>No items</li>
+                                                        @endif
+                                                    </ul>
+                                                </td>
+                                                <td>{{ Carbon\Carbon::parse($item->mulai_berlaku)->format('d M Y') }}
+                                                </td>
+                                                <td>{{ Carbon\Carbon::parse($item->selesai_berlaku)->format('d M Y') }}
+                                                </td>
+                                                <td>
+                                                    <form action="{{ route('cashier.addCart') }}" method="post">
+                                                        @csrf
+                                                        <input type="hidden" name="kode_barcode"
+                                                            value="{{ $item->kode_barcode }}">
+                                                        <input type="hidden" name="tipe" value="promoBundle">
+                                                        @php
+                                                            $hasStock = $item->promoBundleItems->every(function (
+                                                                $bundleItem,
+                                                            ) {
+                                                                return $bundleItem->product->stok > 0;
+                                                            });
+                                                        @endphp
+                                                        @if ($hasStock)
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-primary">Pilih</button>
+                                                        @else
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-secondary">Stok Habis</button>
+                                                        @endif
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
